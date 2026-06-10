@@ -1,0 +1,39 @@
+# Ailey Portal — Public Art Site + Private Chat
+# Public pages are allowed, private pages are blocked.
+
+User-agent: *
+Allow: /
+Allow: /galerie
+Allow: /blog
+Allow: /feed
+Allow: /buch
+Allow: /author
+Allow: /about
+Allow: /impressum
+Allow: /datenschutz
+Allow: /agb
+Allow: /sitemap.xml
+Allow: /assets/
+
+Disallow: /chat
+Disallow: /login
+Disallow: /register
+Disallow: /settings
+Disallow: /admin
+Disallow: /api.php
+Disallow: /_make_hash.php
+
+# Let social media + search bots fetch OG previews / index public art
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+Sitemap: https://hey-ailey.com/sitemap.xml

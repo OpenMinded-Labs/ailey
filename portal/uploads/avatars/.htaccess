@@ -1,0 +1,13 @@
+# Only serve image files — block PHP/script execution
+<FilesMatch "\.(php|phtml|php3|php4|php5|phps|cgi|pl|py|sh|bash)$">
+    Require all denied
+</FilesMatch>
+
+# Only allow image MIME types
+<FilesMatch "\.webp$">
+    ForceType image/webp
+</FilesMatch>
+
+Options -Indexes -ExecCGI
+AddHandler cgi-script .php .pl .py .cgi
+RemoveHandler .php .phtml

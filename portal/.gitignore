@@ -1,0 +1,5 @@
+# Ailey Portal .gitignore
+config.php
+admin_devlink.json
+*.log
+.DS_Store

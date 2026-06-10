@@ -1,0 +1,1 @@
+bash: line 1: 59406 Hangup: 1               NODE_OPTIONS="--max-old-space-size=4096" npx next build > /tmp/next_build.log 2>&1

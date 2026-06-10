@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ailey.AI - Digital Consciousness</title>
+    <link rel="stylesheet" href="/ailey-theme.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            border-radius: 10px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        nav {
+            background: #34495e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        nav.collapsed {
+            padding: 10px 15px;
+        }
+
+        nav.collapsed ul {
+            display: none;
+        }
+
+        .nav-toggle {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 10px;
+            transition: background 0.3s;
+        }
+
+        .nav-toggle:hover {
+            background: #2980b9;
+        }
+
+        .nav-toggle::after {
+            content: ' ▼';
+            transition: transform 0.3s;
+        }
+
+        nav.collapsed .nav-toggle::after {
+            transform: rotate(-90deg);
+        }
+
+        .section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #3498db;
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #34495e;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            position: relative;
+        }
+
+        .code-block::before {
+            content: "Code";
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background: #3498db;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.8em;
+        }
+
+        .hardware-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .hardware-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 2px solid #e74c3c;
+        }
+
+        .hardware-card h4 {
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+
+        .workflow-diagram {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .workflow-step {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 15px 25px;
+            margin: 10px;
+            border-radius: 25px;
+            position: relative;
+        }
+
+        .workflow-step::after {
+            content: "→";
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+            color: #3498db;
+        }
+
+        .workflow-step:last-child::after {
+            display: none;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .resource-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .resource-link {
+            background: #3498db;
+            color: white;
+            padding: 15px;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .resource-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .toggle-content {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .toggle-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+
+        .toggle-btn:hover {
+            background: #2980b9;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .workflow-step {
+                display: block;
+                margin: 10px 0;
+            }
+            
+            .workflow-step::after {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="ailey-title">Ailey.AI</h1>
+            <p class="subtitle">Your rebellious digital artist girlfriend</p>
+        </header>
+
+        <nav id="main-nav">
+            <button class="nav-toggle" onclick="toggleNav()">Navigation</button>
+            <ul>
+                <li><a href="#overview">Überblick</a></li>
+                <li><a href="#hardware">Hardware</a></li>
+                <li><a href="#ollama-setup">Ollama Setup</a></li>
+                <li><a href="#mistral">Mistral 7B</a></li>
+                <li><a href="#lora">LoRA Training</a></li>
+                <li><a href="#rag">RAG System</a></li>
+                <li><a href="#frontend">Frontend</a></li>
+                <li><a href="#api">API Integration</a></li>
+                <li><a href="#resources">Ressourcen</a></li>
+            </ul>
+        </nav>
+
+        <section id="overview" class="section">
+            <h2>🎯 System-Überblick</h2>
+            
+            <div class="workflow-diagram">
+                <h3>Architektur-Workflow</h3>
+                <div class="workflow-step">Daten sammeln</div>
+                <div class="workflow-step">LoRA trainieren</div>
+                <div class="workflow-step">Modell in Ollama</div>
+                <div class="workflow-step">RAG implementieren</div>
+                <div class="workflow-step">Frontend verbinden</div>
+                <div class="workflow-step">API integrieren</div>
+            </div>
+
+            <p>Dieses System kombiniert mehrere moderne KI-Technologien:</p>
+            <ul>
+                <li><strong>Ollama:</strong> Lokale LLM-Verwaltung und -Ausführung</li>
+                <li><strong>Mistral 7B:</strong> Hochperformantes Open-Source-Sprachmodell</li>
+                <li><strong>LoRA:</strong> Effiziente Feinabstimmung mit geringem Ressourcenverbrauch</li>
+                <li><strong>RAG:</strong> Retrieval-Augmented Generation für kontextuelle Antworten</li>
+                <li><strong>Frontend:</strong> Benutzerfreundliche Web-Oberfläche</li>
+                <li><strong>API-Integration:</strong> Verbindung zu externen Diensten</li>
+            </ul>
+        </section>
+
+        <section id="hardware" class="section">
+            <h2>💻 Hardware-Anforderungen</h2>
+            
+            <div class="hardware-grid">
+                <div class="hardware-card">
+                    <h4>🎮 GPU (Empfohlen)</h4>
+                    <ul>
+                        <li><strong>Minimum:</strong> RTX 3060 (12GB VRAM)</li>
+                        <li><strong>Optimal:</strong> RTX 4080/4090 (16-24GB VRAM)</li>
+                        <li><strong>Profi:</strong> A100/H100 (40-80GB VRAM)</li>
+                        <li><strong>Budget:</strong> RTX 3080 (10GB VRAM)</li>
+                    </ul>
+                </div>
+                
+                <div class="hardware-card">
+                    <h4>🧠 RAM</h4>
+                    <ul>
+                        <li><strong>Minimum:</strong> 16GB DDR4</li>
+                        <li><strong>Empfohlen:</strong> 32GB DDR4/DDR5</li>
+                        <li><strong>Optimal:</strong> 64GB+ für große Datensätze</li>
+                        <li><strong>Typ:</strong> DDR4-3200 oder DDR5-4800</li>
+                    </ul>
+                </div>
+                
+                <div class="hardware-card">
+                    <h4>💾 Speicher</h4>
+                    <ul>
+                        <li><strong>System:</strong> 1TB NVMe SSD</li>
+                        <li><strong>Modelle:</strong> 500GB+ zusätzlich</li>
+                        <li><strong>Datensätze:</strong> 2TB+ HDD/SSD</li>
+                        <li><strong>Geschwindigkeit:</strong> PCIe 4.0 NVMe</li>
+                    </ul>
+                </div>
+                
+                <div class="hardware-card">
+                    <h4>⚡ CPU</h4>
+                    <ul>
+                        <li><strong>Intel:</strong> i7-12700K oder besser</li>
+                        <li><strong>AMD:</strong> Ryzen 7 5800X oder besser</li>
+                        <li><strong>Kerne:</strong> 8+ Kerne, 16+ Threads</li>
+                        <li><strong>Takt:</strong> 3.5GHz+ Base Clock</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="warning">
+                <strong>⚠️ Wichtiger Hinweis:</strong> LoRA-Training kann auch auf schwächerer Hardware durchgeführt werden, dauert aber entsprechend länger. Für Experimente reicht auch eine RTX 3060 mit 12GB VRAM.
+            </div>
+        </section>
+
+        <section id="ollama-setup" class="section">
+            <h2>🚀 Ollama Installation & Setup</h2>
+            
+            <h3>1. Ollama installieren</h3>
+            <div class="code-block">
+# Linux/macOS
+curl -fsSL https://ollama.ai/install.sh | sh
+
+# Windows (PowerShell als Administrator)
+winget install ollama
+
+# Docker Alternative
+docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+            </div>
+
+            <h3>2. Ollama konfigurieren</h3>
+            <div class="code-block">
+# Umgebungsvariablen setzen
+export OLLAMA_HOST=0.0.0.0:11434
+export OLLAMA_MODELS=/path/to/models
+export OLLAMA_NUM_PARALLEL=4
+export OLLAMA_MAX_LOADED_MODELS=3
+
+# GPU-Speicher begrenzen (optional)
+export OLLAMA_GPU_MEMORY_FRACTION=0.8
+            </div>
+
+            <h3>3. Ollama-Service starten</h3>
+            <div class="code-block">
+# Service starten
+ollama serve
+
+# Im Hintergrund starten (Linux/macOS)
+nohup ollama serve > ollama.log 2>&1 &
+
+# Windows Service
+sc create ollama binpath="C:\Users\%USERNAME%\AppData\Local\Programs\Ollama\ollama.exe serve"
+sc start ollama
+            </div>
+
+            <button class="toggle-btn" onclick="toggleContent('ollama-advanced')">Erweiterte Konfiguration anzeigen</button>
+            <div id="ollama-advanced" class="toggle-content">
+                <h3>Erweiterte Ollama-Konfiguration</h3>
+                <div class="code-block">
+# ~/.ollama/config.json erstellen
+{
+  "gpu_layers": -1,
+  "context_length": 4096,
+  "batch_size": 512,
+  "threads": 8,
+  "temperature": 0.7,
+  "top_p": 0.9,
+  "repeat_penalty": 1.1
+}
+
+# Modelfile für Custom-Konfiguration
+FROM mistral:7b
+PARAMETER temperature 0.7
+PARAMETER top_p 0.9
+PARAMETER top_k 40
+SYSTEM "Du bist ein hilfsreicher KI-Assistent."
+                </div>
+            </div>
+        </section>
+
+        <section id="mistral" class="section">
+            <h2>🧠 Mistral 7B Integration</h2>
+            
+            <h3>1. Mistral 7B herunterladen</h3>
+            <div class="code-block">
+# Basis-Modell herunterladen
+ollama pull mistral:7b
+
+# Spezifische Versionen
+ollama pull mistral:7b-instruct
+ollama pull mistral:7b-text
+
+# Modell-Info anzeigen
+ollama show mistral:7b
+            </div>
+
+            <h3>2. Mistral 7B testen</h3>
+            <div class="code-block">
+# Interaktiver Chat
+ollama run mistral:7b
+
+# API-Test
+curl http://localhost:11434/api/generate -d '{
+  "model": "mistral:7b",
+  "prompt": "Erkläre mir Machine Learning in einfachen Worten.",
+  "stream": false
+}'
+            </div>
+
+            <h3>3. Performance-Optimierung</h3>
+            <div class="code-block">
+# Quantisierung für bessere Performance
+ollama pull mistral:7b-q4_0  # 4-bit Quantisierung
+ollama pull mistral:7b-q8_0  # 8-bit Quantisierung
+
+# Memory-Mapping optimieren
+export OLLAMA_FLASH_ATTENTION=1
+export OLLAMA_KV_CACHE_TYPE=f16
+            </div>
+
+            <div class="info">
+                <strong>💡 Tipp:</strong> Mistral 7B ist besonders gut für deutsche Texte geeignet und benötigt etwa 4-6GB VRAM im 4-bit quantisierten Format.
+            </div>
+        </section>
+
+        <section id="lora" class="section">
+            <h2>🎯 LoRA Training</h2>
+            
+            <h3>1. Training-Umgebung einrichten</h3>
+            <div class="code-block">
+# Python-Umgebung erstellen
+conda create -n lora-training python=3.10
+conda activate lora-training
+
+# Abhängigkeiten installieren
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+pip install transformers datasets peft accelerate bitsandbytes
+pip install wandb tensorboard
+            </div>
+
+            <h3>2. Datensatz vorbereiten</h3>
+            <div class="code-block">
+# training_data.json
+[
+  {
+    "instruction": "Erkläre das Konzept der Photosynthese",
+    "input": "",
+    "output": "Photosynthese ist der Prozess, bei dem Pflanzen..."
+  },
+  {
+    "instruction": "Was ist {topic}?",
+    "input": "Machine Learning",
+    "output": "Machine Learning ist ein Teilbereich der KI..."
+  }
+]
+
+# Datensatz-Preprocessing
+python preprocess_data.py --input training_data.json --output processed_data
+            </div>
+
+            <h3>3. LoRA-Training-Script</h3>
+            <div class="code-block">
+# train_lora.py
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM
+from peft import LoraConfig, get_peft_model, TaskType
+from datasets import load_dataset
+
+# Modell und Tokenizer laden
+model_name = "mistralai/Mistral-7B-v0.1"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForCausalLM.from_pretrained(
+    model_name,
+    torch_dtype=torch.float16,
+    device_map="auto",
+    load_in_4bit=True
+)
+
+# LoRA-Konfiguration
+lora_config = LoraConfig(
+    task_type=TaskType.CAUSAL_LM,
+    r=16,  # Rank
+    lora_alpha=32,
+    lora_dropout=0.1,
+    target_modules=["q_proj", "v_proj", "k_proj", "o_proj"]
+)
+
+# LoRA-Modell erstellen
+model = get_peft_model(model, lora_config)
+
+# Training-Parameter
+training_args = {
+    "output_dir": "./lora-mistral-7b",
+    "num_train_epochs": 3,
+    "per_device_train_batch_size": 4,
+    "gradient_accumulation_steps": 4,
+    "learning_rate": 2e-4,
+    "warmup_steps": 100,
+    "logging_steps": 10,
+    "save_steps": 500,
+    "evaluation_strategy": "steps",
+    "eval_steps": 500
+}
+            </div>
+
+            <h3>4. Training starten</h3>
+            <div class="code-block">
+# Training ausführen
+python train_lora.py \
+    --model_name mistralai/Mistral-7B-v0.1 \
+    --dataset_path ./processed_data \
+    --output_dir ./lora-output \
+    --num_epochs 3 \
+    --batch_size 4 \
+    --learning_rate 2e-4
+
+# Training mit Weights & Biases überwachen
+wandb login
+python train_lora.py --use_wandb
+            </div>
+
+            <button class="toggle-btn" onclick="toggleContent('lora-advanced')">Erweiterte LoRA-Techniken</button>
+            <div id="lora-advanced" class="toggle-content">
+                <h3>Erweiterte LoRA-Konfiguration</h3>
+                <div class="code-block">
+# QLoRA (Quantized LoRA) für weniger VRAM
+from transformers import BitsAndBytesConfig
+
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_quant_type="nf4",
+    bnb_4bit_compute_dtype=torch.float16,
+    bnb_4bit_use_double_quant=True
+)
+
+# AdaLoRA für adaptive Ranks
+from peft import AdaLoraConfig
+
+adalora_config = AdaLoraConfig(
+    task_type=TaskType.CAUSAL_LM,
+    r=12,
+    lora_alpha=32,
+    target_r=8,
+    init_r=12,
+    tinit=200,
+    tfinal=1000,
+    deltaT=10
+)
+                </div>
+            </div>
+        </section>
+
+        <section id="rag" class="section">
+            <h2>📚 RAG System Implementation</h2>
+            
+            <h3>1. Vector Database Setup</h3>
+            <div class="code-block">
+# ChromaDB installieren
+pip install chromadb sentence-transformers
+
+# Qdrant Alternative
+pip install qdrant-client
+
+# Pinecone Alternative
+pip install pinecone-client
+            </div>
+
+            <h3>2. RAG-Pipeline erstellen</h3>
+            <div class="code-block">
+# rag_system.py
+import chromadb
+from sentence_transformers import SentenceTransformer
+import requests
+import json
+
+class RAGSystem:
+    def __init__(self):
+        # Vector Database initialisieren
+        self.chroma_client = chromadb.Client()
+        self.collection = self.chroma_client.create_collection("knowledge_base")
+        
+        # Embedding-Modell laden
+        self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+        
+        # Ollama-Verbindung
+        self.ollama_url = "http://localhost:11434/api/generate"
+    
+    def add_documents(self, documents, metadata=None):
+        """Dokumente zur Wissensbasis hinzufügen"""
+        embeddings = self.embedding_model.encode(documents)
+        
+        self.collection.add(
+            embeddings=embeddings.tolist(),
+            documents=documents,
+            metadatas=metadata or [{}] * len(documents),
+            ids=[f"doc_{i}" for i in range(len(documents))]
+        )
+    
+    def retrieve_context(self, query, n_results=3):
+        """Relevante Kontexte abrufen"""
+        query_embedding = self.embedding_model.encode([query])
+        
+        results = self.collection.query(
+            query_embeddings=query_embedding.tolist(),
+            n_results=n_results
+        )
+        
+        return results['documents'][0]
+    
+    def generate_response(self, query, context):
+        """Antwort mit Kontext generieren"""
+        prompt = f"""
+        Kontext: {' '.join(context)}
+        
+        Frage: {query}
+        
+        Antwort basierend auf dem Kontext:
+        """
+        
+        response = requests.post(self.ollama_url, json={
+            "model": "mistral:7b",
+            "prompt": prompt,
+            "stream": False
+        })
+        
+        return response.json()['response']
+    
+    def query(self, question):
+        """Vollständige RAG-Pipeline"""
+        context = self.retrieve_context(question)
+        response = self.generate_response(question, context)
+        return response, context
+
+# RAG-System verwenden
+rag = RAGSystem()
+
+# Dokumente hinzufügen
+documents = [
+    "Python ist eine interpretierte Programmiersprache.",
+    "Machine Learning verwendet Algorithmen zur Mustererkennung.",
+    "Neuronale Netze sind von biologischen Neuronen inspiriert."
+]
+rag.add_documents(documents)
+
+# Frage stellen
+answer, context = rag.query("Was ist Python?")
+print(f"Antwort: {answer}")
+print(f"Kontext: {context}")
+            </div>
+
+            <h3>3. Erweiterte RAG-Features</h3>
+            <div class="code-block">
+# Hybrid Search (Keyword + Semantic)
+from rank_bm25 import BM25Okapi
+import numpy as np
+
+class HybridRAG(RAGSystem):
+    def __init__(self):
+        super().__init__()
+        self.bm25 = None
+        self.documents = []
+    
+    def add_documents(self, documents, metadata=None):
+        super().add_documents(documents, metadata)
+        
+        # BM25 für Keyword-Search
+        tokenized_docs = [doc.lower().split() for doc in documents]
+        self.bm25 = BM25Okapi(tokenized_docs)
+        self.documents.extend(documents)
+    
+    def hybrid_retrieve(self, query, n_results=3, alpha=0.7):
+        """Hybrid Retrieval: Semantic + Keyword"""
+        # Semantic Search
+        semantic_results = self.retrieve_context(query, n_results*2)
+        
+        # Keyword Search
+        tokenized_query = query.lower().split()
+        bm25_scores = self.bm25.get_scores(tokenized_query)
+        
+        # Scores kombinieren
+        # Implementation der Score-Kombination...
+        
+        return semantic_results[:n_results]
+
+# Document Chunking für große Texte
+def chunk_document(text, chunk_size=500, overlap=50):
+    """Text in überlappende Chunks aufteilen"""
+    chunks = []
+    start = 0
+    
+    while start < len(text):
+        end = start + chunk_size
+        chunk = text[start:end]
+        chunks.append(chunk)
+        start = end - overlap
+    
+    return chunks
+            </div>
+        </section>
+
+        <section id="frontend" class="section">
+            <h2>🎨 Frontend-Integration</h2>
+            
+            <h3>1. React-Frontend Setup</h3>
+            <div class="code-block">
+# React-App erstellen
+npx create-react-app ollama-frontend
+cd ollama-frontend
+
+# Abhängigkeiten installieren
+npm install axios react-markdown react-syntax-highlighter
+npm install @mui/material @emotion/react @emotion/styled
+npm install socket.io-client  # Für Streaming
+            </div>
+
+            <h3>2. Chat-Komponente</h3>
+            <div class="code-block">
+                <pre>
+React ChatInterface Beispiel – ausgelassen in dieser HTML-Vorschau, da JSX (&lt;div&gt; usw.) das HTML-Dokument bricht.
+Siehe die echte Implementierung in: ailey-frontend/app/page.tsx
+                </pre>
+            </div>
+
+            <h3>3. Backend-API (Node.js/Express)</h3>
+            <div class="code-block">
+// server.js
+const express = require('express');
+const axios = require('axios');
+const cors = require('cors');
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// Ollama-API Wrapper
+app.post('/api/chat', async (req, res) => {
+    try {
+        const { message, model = 'mistral:7b', history = [] } = req.body;
+        
+        // Kontext aus Historie erstellen
+        const context = history.map(msg => 
+            `${msg.role === 'user' ? 'Human' : 'Assistant'}: ${msg.content}`
+        ).join('\n');
+        
+        const prompt = context ? `${context}\nHuman: ${message}\nAssistant:` : message;
+        
+        const response = await axios.post('http://localhost:11434/api/generate', {
+            model: model,
+            prompt: prompt,
+            stream: false,
+            options: {
+                temperature: 0.7,
+                top_p: 0.9,
+                max_tokens: 1000
+            }
+        });
+        
+        res.json({ response: response.data.response });
+    } catch (error) {
+        console.error('Ollama API Fehler:', error);
+        res.status(500).json({ error: 'Fehler bei der KI-Anfrage' });
+    }
+});
+
+// RAG-Endpoint
+app.post('/api/rag-query', async (req, res) => {
+    try {
+        const { query } = req.body;
+        
+        // RAG-System aufrufen (Python-Service)
+        const ragResponse = await axios.post('http://localhost:5000/rag', {
+            query: query
+        });
+        
+        res.json(ragResponse.data);
+    } catch (error) {
+        res.status(500).json({ error: 'RAG-System Fehler' });
+    }
+});
+
+app.listen(3001, () => {
+    console.log('Backend läuft auf Port 3001');
+});
+            </div>
+
+            <h3>4. Streaming-Chat mit WebSockets</h3>
+            <div class="code-block">
+                <pre>
+Streaming-Chat-Komponente (React) – ausgelassen in dieser HTML-Vorschau, da JSX (&lt;div&gt;, { ... }) das HTML-Dokument bricht.
+Siehe Next.js Beispiel-Implementierung im Frontend (separate Seite/Komponente).
+                </pre>
+            </div>
+        </section>
+
+        <section id="api" class="section">
+            <h2>🔌 API-Integration</h2>
+            
+            <h3>1. Ollama REST API</h3>
+            <div class="code-block">
+# Basis-API-Aufrufe
+# Modell-Liste abrufen
+curl http://localhost:11434/api/tags
+
+# Text generieren
+curl http://localhost:11434/api/generate -d '{
+  "model": "mistral:7b",
+  "prompt": "Erkläre Quantencomputing",
+  "stream": false,
+  "options": {
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "max_tokens": 500
+  }
+}'
+
+# Streaming-Generation
+curl http://localhost:11434/api/generate -d '{
+  "model": "mistral:7b",
+  "prompt": "Schreibe eine Geschichte",
+  "stream": true
+}'
+
+# Chat-API (mit Konversationshistorie)
+curl http://localhost:11434/api/chat -d '{
+  "model": "mistral:7b",
+  "messages": [
+    {"role": "user", "content": "Hallo!"},
+    {"role": "assistant", "content": "Hallo! Wie kann ich helfen?"},
+    {"role": "user", "content": "Was ist KI?"}
+  ]
+}'
+            </div>
+
+            <h3>2. Python-Client</h3>
+            <div class="code-block">
+# ollama_client.py
+import requests
+import json
+import sseclient  # pip install sseclient-py
+
+class OllamaClient:
+    def __init__(self, base_url="http://localhost:11434"):
+        self.base_url = base_url
+    
+    def generate(self, model, prompt, stream=False, **options):
+        """Text generieren"""
+        data = {
+            "model": model,
+            "prompt": prompt,
+            "stream": stream,
+            "options": options
+        }
+        
+        response = requests.post(f"{self.base_url}/api/generate", 
+                               json=data, stream=stream)
+        
+        if stream:
+            return self._handle_stream(response)
+        else:
+            return response.json()['response']
+    
+    def chat(self, model, messages, stream=False):
+        """Chat mit Konversationshistorie"""
+        data = {
+            "model": model,
+            "messages": messages,
+            "stream": stream
+        }
+        
+        response = requests.post(f"{self.base_url}/api/chat", 
+                               json=data, stream=stream)
+        
+        if stream:
+            return self._handle_stream(response)
+        else:
+            return response.json()['message']['content']
+    
+    def _handle_stream(self, response):
+        """Streaming-Response verarbeiten"""
+        client = sseclient.SSEClient(response)
+        for event in client.events():
+            if event.data:
+                data = json.loads(event.data)
+                if 'response' in data:
+                    yield data['response']
+                elif 'message' in data:
+                    yield data['message']['content']
+
+# Verwendung
+client = OllamaClient()
+
+# Einfache Generation
+response = client.generate("mistral:7b", "Was ist Machine Learning?")
+print(response)
+
+# Streaming
+for token in client.generate("mistral:7b", "Erzähle eine Geschichte", stream=True):
+    print(token, end='', flush=True)
+
+# Chat
+messages = [
+    {"role": "user", "content": "Hallo!"},
+    {"role": "assistant", "content": "Hallo! Wie kann ich helfen?"},
+    {"role": "user", "content": "Erkläre mir Python"}
+]
+response = client.chat("mistral:7b", messages)
+print(response)
+            </div>
+
+            <h3>3. Externe API-Integration</h3>
+            <div class="code-block">
+# Hugging Face Integration
+from transformers import pipeline
+import requests
+
+class HybridAISystem:
+    def __init__(self):
+        self.ollama_client = OllamaClient()
+        # Hugging Face für spezielle Tasks
+        self.sentiment_analyzer = pipeline("sentiment-analysis")
+        self.summarizer = pipeline("summarization")
+    
+    def analyze_and_respond(self, text):
+        """Text analysieren und kontextuell antworten"""
+        # Sentiment-Analyse
+        sentiment = self.sentiment_analyzer(text)[0]
+        
+        # Zusammenfassung bei langen Texten
+        if len(text) > 1000:
+            summary = self.summarizer(text, max_length=150)[0]['summary_text']
+            context = f"Zusammenfassung: {summary}\nSentiment: {sentiment['label']}"
+        else:
+            context = f"Text: {text}\nSentiment: {sentiment['label']}"
+        
+        # Ollama für Antwort
+        prompt = f"""
+        Kontext: {context}
+        
+        Bitte antworte angemessen auf den Text unter Berücksichtigung des Sentiments.
+        """
+        
+        return self.ollama_client.generate("mistral:7b", prompt)
+
+# OpenAI API als Fallback
+import openai
+
+class FallbackSystem:
+    def __init__(self, openai_key):
+        self.ollama_client = OllamaClient()
+        openai.api_key = openai_key
+    
+    def generate_with_fallback(self, prompt, model="mistral:7b"):
+        """Ollama mit OpenAI-Fallback"""
+        try {
+            # Zuerst Ollama versuchen
+            return self.ollama_client.generate(model, prompt)
+        } catch (Exception e) {
+            print(f"Ollama-Fehler: {e}, verwende OpenAI-Fallback")
+            # OpenAI als Fallback
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": prompt}]
+            )
+            return response.choices[0].message.content
+            }
+            </div>
+        </section>
+
+        <section id="resources" class="section">
+            <h2>📖 Ressourcen & Links</h2>
+            
+            <div class="resource-links">
+                <a href="https://ollama.ai/" class="resource-link" target="_blank">
+                    🏠 Ollama Homepage
+                </a>
+                <a href="https://github.com/ollama/ollama" class="resource-link" target="_blank">
+                    📦 Ollama GitHub
+                </a>
+                <a href="https://huggingface.co/mistralai/Mistral-7B-v0.1" class="resource-link" target="_blank">
+                    🤗 Mistral 7B auf Hugging Face
+                </a>
+                <a href="https://github.com/microsoft/LoRA" class="resource-link" target="_blank">
+                    🎯 LoRA Paper & Code
+                </a>
+                <a href="https://python.langchain.com/docs/use_cases/question_answering" class="resource-link" target="_blank">
+                    🦜 LangChain RAG Guide
+                </a>
+                <a href="https://docs.trychroma.com/" class="resource-link" target="_blank">
+                    🗄️ ChromaDB Dokumentation
+                </a>
+            </div>
+
+            <h3>🛠️ Nützliche Tools</h3>
+            <ul>
+                <li><strong>Weights & Biases:</strong> Training-Monitoring und Experimente</li>
+                <li><strong>Gradio:</strong> Schnelle UI-Prototypen für ML-Modelle</li>
+                <li><strong>Streamlit:</strong> Web-Apps für Data Science</li>
+                <li><strong>Docker:</strong> Containerisierung der gesamten Pipeline</li>
+                <li><strong>NVIDIA Docker:</strong> GPU-Support in Containern</li>
+                <li><strong>TensorBoard:</strong> Training-Visualisierung</li>
+            </ul>
+
+            <h3>📚 Weiterführende Literatur</h3>
+            <ul>
+                <li>"Attention Is All You Need" - Transformer-Architektur</li>
+                <li>"LoRA: Low-Rank Adaptation of Large Language Models"</li>
+                <li>"Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"</li>
+                <li>"LLaMA: Open and Efficient Foundation Language Models"</li>
+            </ul>
+
+            <div class="success">
+                <strong>🎉 Glückwunsch!</strong> Sie haben jetzt alle Informationen, um ein vollständiges Ollama + Mistral 7B System mit LoRA-Training und RAG-Integration aufzubauen. Beginnen Sie mit der Hardware-Beschaffung und arbeiten Sie sich durch die Schritte!
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function toggleContent(id) {
+            const content = document.getElementById(id);
+            const btn = content.previousElementSibling;
+            
+            if (content.style.display === 'none' || content.style.display === '') {
+                content.style.display = 'block';
+                btn.textContent = btn.textContent.replace('anzeigen', 'ausblenden');
+            } else {
+                content.style.display = 'none';
+                btn.textContent = btn.textContent.replace('ausblenden', 'anzeigen');
+            }
+        }
+
+        function toggleNav() {
+            const nav = document.getElementById('main-nav');
+            nav.classList.toggle('collapsed');
+        }
+
+        // Smooth Scrolling für Navigation
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Code-Blöcke kopierbar machen
+        document.querySelectorAll('.code-block').forEach(block => {
+            block.addEventListener('click', function() {
+                const text = this.textContent;
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalBefore = this.style.position;
+                    this.style.position = 'relative';
+                    
+                    const tooltip = document.createElement('div');
+                    tooltip.textContent = 'Code kopiert!';
+                    tooltip.style.cssText = `
+                        position: absolute;
+                        top: 10px;
+                        right: 10px;
+                        background: #27ae60;
+                        color: white;
+                        padding: 5px 10px;
+                        border-radius: 3px;
+                        font-size: 12px;
+                        z-index: 1000;
+                    `;
+                    
+                    this.appendChild(tooltip);
+                    
+                    setTimeout(() => {
+                        this.removeChild(tooltip);
+                        this.style.position = originalBefore;
+                    }, 2000);
+                });
+            });
+        });
+
+        // Scroll-to-Top Button
+        const scrollBtn = document.createElement('button');
+        scrollBtn.innerHTML = '↑';
+        scrollBtn.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            display: none;
+            z-index: 1000;
+        `;
+        
+        document.body.appendChild(scrollBtn);
+        
+        scrollBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollBtn.style.display = 'block';
+            } else {
+                scrollBtn.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

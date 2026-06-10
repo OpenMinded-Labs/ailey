@@ -1,0 +1,50 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "Ailey",
+  "version": "3.0.0",
+  "identifier": "de.hinterhofagentur.ailey",
+  "build": {
+    "frontendDist": "../out",
+    "devUrl": "http://localhost:5175",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Ailey",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 800,
+        "minHeight": 600,
+        "resizable": true,
+        "fullscreen": false,
+        "transparent": false,
+        "decorations": true,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: tauri: https://cdn.jsdelivr.net https://unpkg.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://cdn.jsdelivr.net https://unpkg.com; worker-src 'self' blob: https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' http://127.0.0.1:* http://localhost:* http://10.*:* http://192.168.*:* ws://127.0.0.1:* ws://localhost:* tauri: https://cdn.jsdelivr.net https://unpkg.com https://registry.npmjs.org; frame-src 'self' http://127.0.0.1:* http://localhost:* http://10.*:* http://192.168.*:*; img-src 'self' data: blob: http://127.0.0.1:* http://localhost:* https:; media-src 'self' blob: http://127.0.0.1:* http://localhost:*; font-src 'self' data: https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": [
+      "app",
+      "dmg"
+    ],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "macOS": {
+      "minimumSystemVersion": "14.0",
+      "entitlements": "Entitlements.plist",
+      "signingIdentity": null
+    }
+  }
+}

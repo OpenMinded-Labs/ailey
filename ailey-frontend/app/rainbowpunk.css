@@ -1,0 +1,910 @@
+/* ============================================================
+   🌈 RAINBOWPUNK THEME — Dark base with flowing RGB accents
+   Separate file to prevent Tailwind v4 tree-shaking
+   Maximum visual impact: flowing gradients, glitches, neon
+   ============================================================ */
+
+/* ── @property for Houdini animations ── */
+@property --rb-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@property --rb-hue {
+  syntax: '<number>';
+  initial-value: 0;
+  inherits: true;
+}
+
+/* ── Keyframes ── */
+@keyframes rb-flow {
+  from { --rb-angle: 0deg; }
+  to   { --rb-angle: 360deg; }
+}
+
+@keyframes rb-gradient-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rb-hue-cycle {
+  0%   { --rb-hue: 0; }
+  100% { --rb-hue: 360; }
+}
+
+@keyframes rb-neon-glow {
+  0%   { text-shadow: 0 0 8px #ff2d55, 0 0 16px #ff2d55, 0 0 32px #ff2d5540; }
+  33%  { text-shadow: 0 0 8px #00c7ff, 0 0 16px #5e5ce6, 0 0 32px #5e5ce640; }
+  66%  { text-shadow: 0 0 8px #30d158, 0 0 16px #ffd60a, 0 0 32px #ffd60a40; }
+  100% { text-shadow: 0 0 8px #ff2d55, 0 0 16px #ff2d55, 0 0 32px #ff2d5540; }
+}
+
+@keyframes rb-border-dance {
+  0%   { border-color: #ff2d55; }
+  16%  { border-color: #ff6b2d; }
+  33%  { border-color: #ffd60a; }
+  50%  { border-color: #30d158; }
+  66%  { border-color: #00c7ff; }
+  83%  { border-color: #bf5af2; }
+  100% { border-color: #ff2d55; }
+}
+
+@keyframes rb-glitch-1 {
+  0%, 92%, 100% { transform: none; opacity: 1; }
+  93%  { transform: translate(-3px, 1px) skewX(-2deg); opacity: 0.8; }
+  94%  { transform: translate(2px, -1px) skewX(1deg); opacity: 0.9; }
+  95%  { transform: translate(-1px, 2px); opacity: 0.85; }
+  96%  { transform: none; opacity: 1; }
+}
+
+@keyframes rb-glitch-text {
+  0%, 90%, 100% { 
+    text-shadow: none;
+    transform: none;
+  }
+  91% { 
+    text-shadow: -2px 0 #ff2d55, 2px 0 #00c7ff;
+    transform: translate(1px, 0);
+  }
+  92% { 
+    text-shadow: 2px 0 #ff2d55, -2px 0 #00c7ff;
+    transform: translate(-1px, 0);
+  }
+  93% {
+    text-shadow: -1px 0 #30d158, 1px 0 #bf5af2;
+    transform: translate(0, 1px);
+  }
+  94% { 
+    text-shadow: none;
+    transform: none;
+  }
+}
+
+@keyframes rb-scanline {
+  0%   { top: -10%; }
+  100% { top: 110%; }
+}
+
+@keyframes rb-flicker {
+  0%, 97%, 100% { opacity: 1; }
+  97.5% { opacity: 0.85; }
+  98%   { opacity: 1; }
+  98.5% { opacity: 0.9; }
+}
+
+@keyframes rb-shimmer {
+  0%   { left: -100%; }
+  100% { left: 200%; }
+}
+
+@keyframes stt-ring-pulse-rb {
+  0%   { box-shadow: 0 0 0 0 rgba(255,45,85,0.7); }
+  25%  { box-shadow: 0 0 0 6px rgba(0,199,255,0.5); }
+  50%  { box-shadow: 0 0 0 10px rgba(94,92,230,0); }
+  75%  { box-shadow: 0 0 0 5px rgba(48,209,88,0.4); }
+  100% { box-shadow: 0 0 0 0 rgba(255,45,85,0); }
+}
+
+@keyframes rb-pulse-border {
+  0%, 100% { border-color: rgba(255,45,85,0.3); box-shadow: 0 0 15px rgba(255,45,85,0.05); }
+  25%      { border-color: rgba(0,199,255,0.3); box-shadow: 0 0 15px rgba(0,199,255,0.05); }
+  50%      { border-color: rgba(94,92,230,0.3); box-shadow: 0 0 15px rgba(94,92,230,0.05); }
+  75%      { border-color: rgba(48,209,88,0.3); box-shadow: 0 0 15px rgba(48,209,88,0.05); }
+}
+
+/* ── Base custom properties ── */
+.rainbowpunk {
+  --rb-speed: 4s;
+  animation: rb-hue-cycle 8s linear infinite;
+}
+
+/* ── CSS Variables (double specificity to override .dark) ── */
+.rainbowpunk,
+.dark.rainbowpunk {
+  --background: #08080c;
+  --foreground: #e8e8f0;
+  --card: #111116;
+  --card-foreground: #e8e8f0;
+  --popover: #111116;
+  --popover-foreground: #e8e8f0;
+  --primary: #ff2d55;
+  --primary-foreground: #ffffff;
+  --secondary: #5e5ce6;
+  --secondary-foreground: #ffffff;
+  --muted: #1a1a24;
+  --muted-foreground: #9898a8;
+  --accent: #00c7ff;
+  --accent-foreground: #08080c;
+  --destructive: #ff453a;
+  --destructive-foreground: #ffffff;
+  --border: #2a2a38;
+  --input: #1a1a24;
+  --ring: rgba(255, 45, 85, 0.5);
+  --chart-1: #ff2d55;
+  --chart-2: #00c7ff;
+  --chart-3: #30d158;
+  --chart-4: #ffd60a;
+  --chart-5: #bf5af2;
+  --sidebar: #0c0c10;
+  --sidebar-foreground: #e8e8f0;
+  --sidebar-primary: #ff2d55;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #00c7ff;
+  --sidebar-accent-foreground: #08080c;
+  --sidebar-border: #2a2a38;
+  --sidebar-ring: rgba(255, 45, 85, 0.5);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 GLOBAL EFFECTS — Body, scanline, border glow
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Flowing RGB border on viewport */
+.rainbowpunk body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  border: 2px solid transparent;
+  border-image: linear-gradient(90deg, #ff2d55, #ff6b2d, #ffd60a, #30d158, #00c7ff, #5e5ce6, #bf5af2, #ff2d55, #ff6b2d, #ffd60a, #30d158, #00c7ff) 1;
+  background-size: 300% 100%;
+  animation: rb-gradient-shift 4s linear infinite;
+  opacity: 0.6;
+}
+
+/* Subtle scanline overlay — classic CRT feel */
+.rainbowpunk body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  opacity: 0.4;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 HEADER — Flowing accent bar + glitch logo
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Flowing RGB accent bar on the header bottom border */
+.rainbowpunk header::after,
+.rainbowpunk .border-b.border-border::after {
+  content: '';
+  display: block;
+  height: 2px;
+  background: linear-gradient(90deg, #ff2d55, #ff6b2d, #ffd60a, #30d158, #00c7ff, #5e5ce6, #bf5af2, #ff2d55, #ff6b2d, #ffd60a, #30d158, #00c7ff);
+  background-size: 300% 100%;
+  animation: rb-gradient-shift 4s linear infinite;
+}
+
+/* Header itself gets subtle gradient background */
+.rainbowpunk header {
+  background: linear-gradient(135deg, rgba(17,17,22,0.95), rgba(12,12,18,0.95)) !important;
+  border-bottom-color: transparent !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 A!LEY LOGO — Rainbow flowing text + glitch effect
+   ═══════════════════════════════════════════════════════════════ */
+
+.rainbowpunk .graffiti-text,
+.rb-logo-text {
+  background: linear-gradient(90deg, #ff2d55, #ff6b2d, #ffd60a, #30d158, #00c7ff, #5e5ce6, #bf5af2, #ff2d55, #ff6b2d, #ffd60a, #30d158, #00c7ff) !important;
+  background-size: 300% 100% !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  animation: rb-gradient-shift 4s linear infinite, rb-glitch-text 8s ease-in-out infinite !important;
+  filter: drop-shadow(0 0 8px rgba(255,45,85,0.3)) drop-shadow(0 0 16px rgba(94,92,230,0.2)) !important;
+  position: relative !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 NAV BUTTONS — Shared continuous rainbow gradient across all buttons
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Desktop nav: continuous gradient behind all buttons */
+.rainbowpunk header nav {
+  background: linear-gradient(90deg, #ff2d55, #ff6b2d, #ffd60a, #30d158, #00c7ff, #5e5ce6, #bf5af2, #ff2d55) !important;
+  background-size: 300% 100% !important;
+  animation: rb-gradient-shift 6s linear infinite !important;
+  border-radius: 10px !important;
+  padding: 3px !important;
+  gap: 2px !important;
+}
+
+/* All nav buttons AND the Mehr-wrapper: dark glass look, gradient peeks through gaps */
+.rainbowpunk header nav > button,
+.rainbowpunk header nav > div {
+  background: rgba(8, 8, 12, 0.88) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+  position: relative !important;
+}
+
+/* Active nav button: fully transparent so gradient shows through */
+.rainbowpunk header nav > button[class*="bg-primary"],
+.rainbowpunk header nav > div > button[class*="bg-primary"] {
+  background: transparent !important;
+  color: #fff !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5) !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* The "Mehr" button itself inside its .relative wrapper */
+.rainbowpunk header nav > div > button {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Hovered inactive button: slightly transparent to let gradient bleed through */
+.rainbowpunk header nav > button:hover:not([class*="bg-primary"]),
+.rainbowpunk header nav > div > button:hover:not([class*="bg-primary"]) {
+  background: rgba(8, 8, 12, 0.55) !important;
+  box-shadow: none !important;
+}
+
+/* Dropdown menu: glass with RGB border (NOT the gradient background) */
+.rainbowpunk nav .animate-fade-up,
+.rainbowpunk nav [class*="bg-card"],
+.rainbowpunk [class*="backdrop-blur"] nav div {
+  border-color: rgba(94,92,230,0.3) !important;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.5), 0 0 15px rgba(255,45,85,0.05) !important;
+  background: rgba(14,14,20,0.97) !important;
+}
+
+/* Mobile bottom nav: continuous rainbow gradient bar */
+.rainbowpunk nav.fixed.bottom-0 {
+  border-top: none !important;
+  background: linear-gradient(90deg, #ff2d55, #ff6b2d, #ffd60a, #30d158, #00c7ff, #5e5ce6, #bf5af2, #ff2d55) !important;
+  background-size: 300% 100% !important;
+  animation: rb-gradient-shift 6s linear infinite !important;
+  padding: 3px 3px calc(3px + env(safe-area-inset-bottom)) !important;
+}
+
+/* Mobile nav buttons: dark background, gradient visible in gaps */
+.rainbowpunk nav.fixed.bottom-0 button {
+  background: rgba(8, 8, 12, 0.88) !important;
+  border-radius: 8px !important;
+  border: none !important;
+  transition: background 0.2s !important;
+}
+
+/* Active mobile nav button: transparent, gradient shows through */
+.rainbowpunk nav.fixed.bottom-0 button:has(.text-primary),
+.rainbowpunk nav.fixed.bottom-0 button[class*="text-primary"] {
+  background: transparent !important;
+}
+
+/* Active mobile nav icon: rainbow */
+.rainbowpunk nav.fixed.bottom-0 button .text-primary,
+.rainbowpunk nav.fixed.bottom-0 .text-primary {
+  background: linear-gradient(135deg, #ff2d55, #00c7ff, #5e5ce6) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 BUTTONS — Gradient primary buttons, RGB outlines
+   ═══════════════════════════════════════════════════════════════ */
+
+/* All bg-primary buttons → flowing gradient
+   Use [class~="bg-primary"] to match the exact class token, not hover:bg-primary/10 etc.
+   This prevents hover-only utility classes from triggering the gradient at rest. */
+.rainbowpunk [class~="bg-primary"]:not(nav *):not(header *) {
+  background: linear-gradient(135deg, #ff2d55, #5e5ce6) !important;
+  background-size: 200% 200% !important;
+  animation: rb-gradient-shift 4s ease infinite !important;
+  border: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.rainbowpunk [class~="bg-primary"]:not(nav *):not(header *):hover {
+  background: linear-gradient(135deg, #ff6b2d, #00c7ff, #bf5af2) !important;
+  background-size: 200% 200% !important;
+  box-shadow: 0 0 20px rgba(255,45,85,0.3), 0 0 40px rgba(94,92,230,0.15) !important;
+}
+
+/* Outline buttons: RGB border dance on hover */
+.rainbowpunk button[class*="border-border"]:hover,
+.rainbowpunk a[class*="border-border"]:hover {
+  animation: rb-border-dance 2s linear infinite !important;
+  box-shadow: 0 0 12px rgba(255,45,85,0.1) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 TEXT-PRIMARY — Make all text-primary a flowing gradient
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Override text-primary to be a cycling gradient (non-interactive elements) */
+.rainbowpunk h1.text-primary,
+.rainbowpunk h2.text-primary,
+.rainbowpunk h3.text-primary,
+.rainbowpunk .text-primary:not(button):not(a):not(nav *):not(span.truncate) {
+  background: linear-gradient(90deg, #ff2d55, #ff6b2d, #00c7ff, #5e5ce6, #ff2d55) !important;
+  background-size: 300% 100% !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  animation: rb-gradient-shift 5s linear infinite !important;
+}
+
+/* Icon strokes that use text-primary */
+.rainbowpunk svg.text-primary,
+.rainbowpunk .text-primary svg {
+  filter: drop-shadow(0 0 4px rgba(255,45,85,0.4)) !important;
+  color: #ff2d55 !important;
+  -webkit-text-fill-color: initial !important;
+  background: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 CARDS — Glowing borders, subtle RGB shimmer
+   ═══════════════════════════════════════════════════════════════ */
+
+.rainbowpunk [class*="bg-card"] {
+  background: linear-gradient(135deg, rgba(17,17,22,0.9), rgba(14,14,20,0.95)) !important;
+  border-color: rgba(42,42,56,0.6) !important;
+}
+
+/* Cards with hover: animate border */
+.rainbowpunk .hover-lift:hover,
+.rainbowpunk [class*="cursor-pointer"][class*="border"]:hover {
+  animation: rb-pulse-border 3s ease infinite !important;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.4), 0 0 20px rgba(255,45,85,0.06) !important;
+}
+
+/* Shimmer effect on hovered cards */
+.rainbowpunk .hover-lift {
+  position: relative;
+  overflow: hidden;
+}
+.rainbowpunk .hover-lift::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+  transition: none;
+  pointer-events: none;
+}
+.rainbowpunk .hover-lift:hover::after {
+  animation: rb-shimmer 1.5s ease-in-out;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 CHAT BUBBLES — User bubble gradient, AI bubble neon border
+   ═══════════════════════════════════════════════════════════════ */
+
+/* User messages: rainbow gradient */
+.rainbowpunk [class~="bg-primary"][class~="ml-auto"] {
+  background: linear-gradient(135deg, #ff2d55, #5e5ce6, #bf5af2) !important;
+  background-size: 200% 200% !important;
+  animation: rb-gradient-shift 5s ease infinite !important;
+  box-shadow: 0 2px 15px rgba(255,45,85,0.15) !important;
+}
+
+/* AI messages: subtle neon left border */
+.rainbowpunk [class*="bg-card"][class*="border-accent"] {
+  border-left: 2px solid !important;
+  animation: rb-border-dance 4s linear infinite !important;
+  box-shadow: inset 0 0 30px rgba(94,92,230,0.03) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 INPUT — Flowing border focus, neon glow, BETTER READABILITY
+   ═══════════════════════════════════════════════════════════════ */
+
+.rainbowpunk input[class*="flex-1"],
+.rainbowpunk input[type="text"],
+.rainbowpunk textarea {
+  background: rgba(14, 14, 20, 0.95) !important;
+  border: 1.5px solid rgba(94, 92, 230, 0.35) !important;
+  color: #e8e8f0 !important;
+  -webkit-text-fill-color: #e8e8f0 !important;
+  transition: all 0.3s ease !important;
+}
+
+.rainbowpunk input:focus,
+.rainbowpunk textarea:focus {
+  border-color: #5e5ce6 !important;
+  box-shadow: 0 0 0 2px rgba(94,92,230,0.2), 0 0 20px rgba(0,199,255,0.1) !important;
+  background: rgba(14, 14, 20, 1) !important;
+}
+
+/* Chat input field: high-contrast readable text — override any gradient text */
+.rainbowpunk input[class*="flex-1"]::placeholder {
+  color: rgba(152, 152, 168, 0.6) !important;
+  -webkit-text-fill-color: rgba(152, 152, 168, 0.6) !important;
+}
+
+/* Ensure ALL input/textarea text is readable (no gradient text bleed) */
+.rainbowpunk input,
+.rainbowpunk textarea,
+.rainbowpunk input::placeholder,
+.rainbowpunk textarea::placeholder {
+  background-clip: border-box !important;
+  -webkit-background-clip: border-box !important;
+}
+
+/* Send button: solid vibrant, clearly readable */
+.rainbowpunk [data-send-btn] {
+  background: linear-gradient(135deg, #ff2d55, #5e5ce6) !important;
+  background-size: 200% 200% !important;
+  animation: rb-gradient-shift 3s ease infinite !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 0 12px rgba(255,45,85,0.25), 0 2px 8px rgba(0,0,0,0.3) !important;
+  color: #ffffff !important;
+}
+.rainbowpunk [data-send-btn]:hover {
+  background: linear-gradient(135deg, #ffd60a, #ff2d55, #bf5af2) !important;
+  background-size: 200% 200% !important;
+  box-shadow: 0 0 20px rgba(255,45,85,0.4), 0 0 40px rgba(94,92,230,0.2) !important;
+}
+
+/* All chat toolbar buttons (attach, settings, mic): better contrast */
+.rainbowpunk .flex.gap-2 > button[class*="outline"],
+.rainbowpunk .flex.gap-2 > div > button[class*="outline"] {
+  border-color: rgba(94, 92, 230, 0.4) !important;
+  background: rgba(14, 14, 20, 0.8) !important;
+  color: #b0b0c0 !important;
+}
+.rainbowpunk .flex.gap-2 > button[class*="outline"]:hover,
+.rainbowpunk .flex.gap-2 > div > button[class*="outline"]:hover {
+  border-color: #5e5ce6 !important;
+  background: rgba(94, 92, 230, 0.15) !important;
+  color: #e8e8f0 !important;
+}
+
+/* Active settings/mic buttons: solid colored */
+.rainbowpunk .flex.gap-2 > button[class*="bg-primary"]:not([data-send-btn]) {
+  background: linear-gradient(135deg, rgba(94,92,230,0.6), rgba(191,90,242,0.5)) !important;
+  border-color: rgba(94, 92, 230, 0.4) !important;
+}
+
+/* Destructive (stop/recording) button: vibrant red */
+.rainbowpunk button[class*="destructive"] {
+  background: linear-gradient(135deg, #ff2d55, #ff453a) !important;
+  border: 1.5px solid rgba(255, 45, 85, 0.4) !important;
+  box-shadow: 0 0 12px rgba(255,45,85,0.3) !important;
+  color: #ffffff !important;
+}
+
+/* Range inputs / sliders */
+.rainbowpunk input[type="range"]::-webkit-slider-thumb {
+  background: linear-gradient(135deg, #ff2d55, #5e5ce6) !important;
+  box-shadow: 0 0 8px rgba(255,45,85,0.4) !important;
+}
+.rainbowpunk input[type="range"]::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, #ff2d5540, #5e5ce640, #00c7ff40) !important;
+}
+
+/* Checkboxes */
+.rainbowpunk input[type="checkbox"]:checked {
+  accent-color: #5e5ce6 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 SCROLLBAR — Rainbow gradient
+   ═══════════════════════════════════════════════════════════════ */
+
+.rainbowpunk ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ff2d55, #5e5ce6, #00c7ff) !important;
+  border-radius: 4px !important;
+}
+.rainbowpunk ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ffd60a, #30d158, #00c7ff) !important;
+}
+.rainbowpunk ::-webkit-scrollbar-track {
+  background: #08080c !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 GLASS OVERRIDES — Deeper, more neon
+   ═══════════════════════════════════════════════════════════════ */
+
+.rainbowpunk .glass {
+  background: rgba(8, 8, 12, 0.75) !important;
+  border-color: rgba(255, 45, 85, 0.12) !important;
+  box-shadow: inset 0 0 30px rgba(94,92,230,0.03) !important;
+}
+.rainbowpunk .glass-card {
+  background: rgba(17, 17, 22, 0.75) !important;
+  border-color: rgba(94, 92, 230, 0.15) !important;
+}
+.rainbowpunk .glass-input {
+  background: rgba(26, 26, 36, 0.6) !important;
+  border-color: rgba(0, 199, 255, 0.15) !important;
+}
+.rainbowpunk .glass-input:focus {
+  background: rgba(26, 26, 36, 0.85) !important;
+  border-color: rgba(0, 199, 255, 0.5) !important;
+  box-shadow: 0 0 20px rgba(0, 199, 255, 0.12), 0 0 40px rgba(94,92,230,0.06) !important;
+}
+.rainbowpunk .glass-button {
+  background: linear-gradient(135deg, rgba(255, 45, 85, 0.4), rgba(94, 92, 230, 0.4)) !important;
+  border-color: rgba(255, 45, 85, 0.3) !important;
+}
+.rainbowpunk .glass-button:hover {
+  background: linear-gradient(135deg, rgba(255, 45, 85, 0.6), rgba(0, 199, 255, 0.5)) !important;
+  box-shadow: 0 0 30px rgba(191, 90, 242, 0.25) !important;
+}
+.rainbowpunk .glass-sidebar {
+  background: rgba(8, 8, 12, 0.9) !important;
+  border-color: rgba(94, 92, 230, 0.15) !important;
+}
+.rainbowpunk .glass-message-ai {
+  background: linear-gradient(135deg, rgba(255,45,85,0.06), rgba(94,92,230,0.05), rgba(0,199,255,0.05)) !important;
+  border-color: rgba(94, 92, 230, 0.12) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 GLITCH EFFECTS — Subtle, on section headings
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Section headings get subtle glitch */
+.rainbowpunk h2.text-2xl,
+.rainbowpunk h2.text-lg {
+  animation: rb-glitch-text 12s ease-in-out infinite !important;
+  position: relative !important;
+}
+
+/* Footer text glitch flicker */
+.rainbowpunk footer {
+  animation: rb-flicker 6s step-end infinite !important;
+}
+
+/* Hover glitch on cards */
+.rainbowpunk .hover-lift:hover {
+  animation: rb-glitch-1 4s ease-in-out infinite, rb-pulse-border 3s ease infinite !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 NEON GLOW & GRADIENT BG
+   ═══════════════════════════════════════════════════════════════ */
+
+.rainbowpunk .neon-glow {
+  animation: rb-neon-glow 3s ease-in-out infinite !important;
+}
+
+.rainbowpunk .gradient-bg {
+  background: linear-gradient(-45deg, #08080c, #140a16, #080e1a, #08140e, #08080c) !important;
+  background-size: 400% 400% !important;
+  animation: gradient-shift 12s ease infinite !important;
+}
+
+.rainbowpunk .glow-primary {
+  box-shadow: 0 0 20px rgba(255, 45, 85, 0.2), 0 0 40px rgba(94, 92, 230, 0.08) !important;
+}
+.rainbowpunk .glow-accent {
+  box-shadow: 0 0 20px rgba(0, 199, 255, 0.2), 0 0 40px rgba(48, 209, 88, 0.08) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 SPLASH SCREEN — Rainbow progress bar, neon avatar ring
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Progress bar: full rainbow gradient */
+.rainbowpunk [class*="from-primary"][class*="via-violet"] {
+  background: linear-gradient(90deg, #ff2d55, #ff6b2d, #ffd60a, #30d158, #00c7ff, #5e5ce6, #bf5af2) !important;
+  background-size: 300% 100% !important;
+  animation: rb-gradient-shift 2s linear infinite !important;
+}
+
+/* Avatar ring on splash: rainbow border */
+.rainbowpunk [class*="border-primary"][class*="rounded-full"][class*="w-28"] {
+  animation: rb-border-dance 3s linear infinite !important;
+  box-shadow: 0 0 25px rgba(255,45,85,0.2), 0 0 50px rgba(94,92,230,0.1) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 TABS / PILLS — Rainbow active, gradient hover
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Gallery tab pills, etc. */
+.rainbowpunk button[class*="rounded-full"][class*="bg-primary"] {
+  background: linear-gradient(135deg, #ff2d55, #5e5ce6, #00c7ff) !important;
+  background-size: 200% 200% !important;
+  animation: rb-gradient-shift 3s ease infinite !important;
+  box-shadow: 0 0 12px rgba(255,45,85,0.2) !important;
+}
+
+/* Inactive pills on hover */
+.rainbowpunk button[class*="rounded-full"][class*="bg-zinc-800"]:hover {
+  background: linear-gradient(135deg, rgba(255,45,85,0.15), rgba(94,92,230,0.15)) !important;
+  border-color: rgba(255,45,85,0.2) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 STATUS BADGES & TAGS — Neon glow
+   ═══════════════════════════════════════════════════════════════ */
+
+/* RAG browser, amber badges → rainbow glow */
+.rainbowpunk [class*="bg-amber-500\\/10"] {
+  background: linear-gradient(135deg, rgba(255,45,85,0.1), rgba(94,92,230,0.1)) !important;
+  border-color: rgba(191,90,242,0.2) !important;
+}
+.rainbowpunk [class*="text-amber-300"]:not(input) {
+  color: #bf5af2 !important;
+}
+.rainbowpunk [class*="text-amber-400"]:not(input) {
+  color: #ffd60a !important;
+  text-shadow: 0 0 6px rgba(255,214,10,0.3) !important;
+}
+
+/* Pink accents → cycling neon */
+.rainbowpunk [class*="text-pink-400"] {
+  color: #bf5af2 !important;
+  text-shadow: 0 0 6px rgba(191,90,242,0.3) !important;
+}
+.rainbowpunk [class*="text-pink-500"] {
+  color: #ff2d55 !important;
+  text-shadow: 0 0 6px rgba(255,45,85,0.3) !important;
+}
+.rainbowpunk [class*="bg-pink-500\\/20"] {
+  background: linear-gradient(135deg, rgba(255,45,85,0.15), rgba(191,90,242,0.15)) !important;
+}
+.rainbowpunk [class*="border-pink-500"] {
+  border-color: rgba(191,90,242,0.3) !important;
+}
+
+/* Rose accents → neon */
+.rainbowpunk [class*="text-rose-500"] {
+  color: #ff2d55 !important;
+  text-shadow: 0 0 6px rgba(255,45,85,0.3) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 HARDCODED COLOR OVERRIDES
+   ═══════════════════════════════════════════════════════════════ */
+
+.rainbowpunk .bg-\[\#0a0a0a\] { background-color: #08080c !important; }
+.rainbowpunk .bg-\[\#050505\] { background-color: #06060a !important; }
+.rainbowpunk .bg-\[\#111\],
+.rainbowpunk .bg-\[\#111111\] { background-color: #111116 !important; }
+.rainbowpunk .bg-\[\#1a1a1a\] { background-color: #1a1a24 !important; }
+.rainbowpunk .bg-black { background-color: #08080c !important; }
+
+.rainbowpunk .text-\[\#be123c\] { color: #ff2d55 !important; text-shadow: 0 0 6px rgba(255,45,85,0.3) !important; }
+.rainbowpunk .text-\[\#be123c\]\/70 { color: rgba(255, 45, 85, 0.7) !important; }
+.rainbowpunk .text-\[\#be123c\]\/50 { color: rgba(255, 45, 85, 0.5) !important; }
+.rainbowpunk .border-\[\#be123c\] { border-color: #ff2d55 !important; }
+.rainbowpunk .border-\[\#be123c\]\/30 { border-color: rgba(255, 45, 85, 0.3) !important; }
+.rainbowpunk .border-\[\#be123c\]\/20 { border-color: rgba(255, 45, 85, 0.2) !important; }
+.rainbowpunk .bg-\[\#be123c\]\/10 { background-color: rgba(255, 45, 85, 0.10) !important; }
+.rainbowpunk .bg-\[\#be123c\]\/20 { background-color: rgba(255, 45, 85, 0.20) !important; }
+.rainbowpunk .border-\[\#222\] { border-color: #2a2a38 !important; }
+
+.rainbowpunk .hover\:text-\[\#be123c\]:hover { color: #ff2d55 !important; }
+.rainbowpunk .hover\:bg-\[\#be123c\]\/10:hover { background-color: rgba(255, 45, 85, 0.10) !important; }
+.rainbowpunk .hover\:bg-\[\#1a1a1a\]:hover { background-color: #1a1a24 !important; }
+.rainbowpunk .focus\:border-\[\#be123c\]:focus { border-color: #ff2d55 !important; }
+
+/* zinc bg elements → deeper dark */
+.rainbowpunk [class*="bg-zinc-800"] {
+  background-color: rgba(20,20,28,0.8) !important;
+}
+.rainbowpunk [class*="bg-zinc-800"]:hover {
+  background-color: rgba(26,26,36,0.9) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 LOADER / SPINNER — Rainbow spin
+   ═══════════════════════════════════════════════════════════════ */
+
+.rainbowpunk .animate-spin {
+  filter: drop-shadow(0 0 4px rgba(255,45,85,0.5)) drop-shadow(0 0 8px rgba(94,92,230,0.3)) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 STT RING — Rainbow pulse
+   ═══════════════════════════════════════════════════════════════ */
+
+.rainbowpunk .animate-stt-ring {
+  animation: stt-ring-pulse-rb 1.5s ease-in-out infinite !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 SETTINGS PANEL — Subtle glitch border
+   ═══════════════════════════════════════════════════════════════ */
+
+.rainbowpunk [class*="chat-settings"],
+.rainbowpunk .border.rounded-xl.bg-card {
+  border-color: rgba(94,92,230,0.2) !important;
+  box-shadow: 0 0 20px rgba(94,92,230,0.05), 0 0 40px rgba(0,0,0,0.3) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 MOBILE MENU — Dark glass with RGB flair
+   ═══════════════════════════════════════════════════════════════ */
+
+.rainbowpunk [class*="fixed inset-0"][class*="bg-background"] {
+  background: rgba(8,8,12,0.97) !important;
+}
+
+.rainbowpunk [class*="fixed inset-0"] button[class*="bg-primary"] {
+  background: linear-gradient(135deg, #ff2d55, #5e5ce6) !important;
+  background-size: 200% 200% !important;
+  animation: rb-gradient-shift 3s ease infinite !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 HOVER-PRIMARY/10 overrides — Make hover states neon
+   ═══════════════════════════════════════════════════════════════ */
+
+.rainbowpunk [class*="hover\\:bg-primary"]:hover {
+  background: linear-gradient(135deg, rgba(255,45,85,0.12), rgba(94,92,230,0.08)) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 TOOLTIP / POPOVER — Neon border
+   ═══════════════════════════════════════════════════════════════ */
+
+.rainbowpunk [class*="bg-popover"],
+.rainbowpunk [class*="bg-card\\/95"] {
+  background: rgba(14,14,20,0.97) !important;
+  border-color: rgba(94,92,230,0.2) !important;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 15px rgba(255,45,85,0.04) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 FOOTER — Subtle rainbow text
+   ═══════════════════════════════════════════════════════════════ */
+
+.rainbowpunk footer .text-muted-foreground {
+  background: linear-gradient(90deg, rgba(152,152,168,0.6), rgba(255,45,85,0.4), rgba(0,199,255,0.4), rgba(152,152,168,0.6)) !important;
+  background-size: 300% 100% !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  animation: rb-gradient-shift 8s linear infinite !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌈 LIFESIM — Theme-adapted buttons with RGB flair
+   ═══════════════════════════════════════════════════════════════ */
+
+.rainbowpunk .lifesim-btn-a {
+  background: linear-gradient(135deg, rgba(255,45,85,0.5), rgba(94,92,230,0.5)) !important;
+  border: 1px solid rgba(255,45,85,0.3) !important;
+  box-shadow: 0 0 12px rgba(255,45,85,0.2) !important;
+  animation: rb-pulse-border 3s ease infinite !important;
+}
+.rainbowpunk .lifesim-btn-a:active {
+  background: linear-gradient(135deg, rgba(255,45,85,0.7), rgba(0,199,255,0.5)) !important;
+  box-shadow: 0 0 20px rgba(255,45,85,0.4) !important;
+}
+
+.rainbowpunk .lifesim-btn-b {
+  background: linear-gradient(135deg, rgba(0,199,255,0.4), rgba(191,90,242,0.4)) !important;
+  border: 1px solid rgba(0,199,255,0.25) !important;
+  box-shadow: 0 0 10px rgba(0,199,255,0.15) !important;
+}
+.rainbowpunk .lifesim-btn-b:active {
+  background: linear-gradient(135deg, rgba(0,199,255,0.6), rgba(191,90,242,0.6)) !important;
+  box-shadow: 0 0 18px rgba(0,199,255,0.3) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   💀 PUNKY ELEMENTS — Exclusive to Rainbowpunk
+   Skull icons, punk decorations, anarchy vibes
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Section headings get skull decorators */
+.rainbowpunk h2::before {
+  content: '☠ ';
+  opacity: 0.5;
+  font-size: 0.8em;
+  filter: drop-shadow(0 0 4px rgba(255,45,85,0.4));
+}
+
+/* Navigation active item: tiny skull accent */
+.rainbowpunk nav button[class*="bg-primary"]::after {
+  content: ' ⚡';
+  font-size: 0.65em;
+  opacity: 0.8;
+  margin-left: 2px;
+  filter: drop-shadow(0 0 3px rgba(255,255,255,0.5));
+}
+
+/* Card headers in sections: punk accent */
+.rainbowpunk .text-2xl.font-bold::after,
+.rainbowpunk h2.text-lg.font-bold::after {
+  content: ' 🤘';
+  font-size: 0.6em;
+  opacity: 0.4;
+  vertical-align: super;
+}
+
+/* Footer: punk signature */
+.rainbowpunk footer::before {
+  content: '⚡ ';
+  opacity: 0.3;
+}
+.rainbowpunk footer::after {
+  content: ' ☠';
+  opacity: 0.3;
+}
+
+/* Splash screen avatar: skull badge */
+.rainbowpunk [class*="rounded-full"][class*="w-28"]::after {
+  content: '💀';
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  font-size: 18px;
+  filter: drop-shadow(0 0 6px rgba(255,45,85,0.6));
+  animation: rb-glitch-1 6s ease-in-out infinite;
+  z-index: 10;
+}
+
+/* Chat input area: punk accent bar */
+.rainbowpunk [class*="pb-"][class*="border-t"]::before {
+  content: '';
+  display: block;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #ff2d55, #ffd60a, #00c7ff, #bf5af2, transparent);
+  margin-bottom: 2px;
+  opacity: 0.4;
+}
+
+/* Settings/gear cards: anarchy corner */
+.rainbowpunk [class*="bg-muted"][class*="rounded-lg"] {
+  position: relative;
+}
+.rainbowpunk [class*="bg-muted"][class*="rounded-lg"]::before {
+  content: '✖';
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  font-size: 8px;
+  opacity: 0.12;
+  color: #ff2d55;
+  pointer-events: none;
+}
+
+/* Mobile menu: punk header */
+.rainbowpunk [class*="fixed inset-0"][class*="bg-background"] .text-xs.text-muted-foreground::before {
+  content: '☠ ';
+  opacity: 0.5;
+}
+.rainbowpunk [class*="fixed inset-0"][class*="bg-background"] .text-xs.text-muted-foreground::after {
+  content: ' ☠';
+  opacity: 0.5;
+}
+

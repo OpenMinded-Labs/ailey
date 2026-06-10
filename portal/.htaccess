@@ -1,0 +1,84 @@
+# Ailey Portal — Apache .htaccess for allinkl
+# Routes all non-static requests through index.php
+
+# Disable directory listing
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Force HTTPS
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Don't rewrite actual files and directories
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Route everything through index.php
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
+
+# Security & caching headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "DENY"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+</IfModule>
+
+# Cache static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType image/x-icon "access plus 6 months"
+    ExpiresByType audio/mpeg "access plus 6 months"
+    ExpiresByType audio/mp3 "access plus 6 months"
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    ExpiresByType application/manifest+json "access plus 1 week"
+</IfModule>
+
+# Correct MIME type for the PWA web app manifest
+<IfModule mod_mime.c>
+    AddType application/manifest+json .webmanifest
+    AddType image/x-icon .ico
+</IfModule>
+
+# Protect config file
+<Files "config.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+<Files "config.example.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Protect db.php and auth.php from direct access
+<FilesMatch "^(db|auth|_make_hash)\.php$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Protect runtime state JSONs (written by API, never served directly)
+<FilesMatch "^(admin_devlink)\.json$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# PHP settings (allinkl compatible)
+<IfModule mod_php.c>
+    php_value upload_max_filesize 20M
+    php_value post_max_size 25M
+    php_value max_execution_time 120
+    php_value memory_limit 128M
+    php_value session.cookie_httponly 1
+    php_value session.cookie_secure 1
+    php_value session.use_strict_mode 1
+</IfModule>

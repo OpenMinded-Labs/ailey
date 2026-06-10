@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 80" class="ailey-signature-svg">
+  <defs>
+    <linearGradient id="sig-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FF1493"/>
+      <stop offset="50%" style="stop-color:#FF69B4"/>
+      <stop offset="100%" style="stop-color:#FF1493"/>
+    </linearGradient>
+    <filter id="sig-glow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Punky handwritten "A!LEY" with X instead of dot on ! -->
+  <g filter="url(#sig-glow)" fill="none" stroke="url(#sig-grad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- A — punky angular -->
+    <path d="M 18 58 L 32 16 L 46 58 M 24 42 L 40 42"/>
+    <!-- ! — exclamation with X dot -->
+    <path d="M 56 16 L 54 40"/>
+    <path d="M 51 50 L 57 56 M 57 50 L 51 56"/>
+    <!-- L — angular punk -->
+    <path d="M 72 16 L 72 58 L 92 58"/>
+    <!-- E — energetic -->
+    <path d="M 104 16 L 104 58 M 104 16 L 122 16 M 104 37 L 118 37 M 104 58 L 122 58"/>
+    <!-- Y — with flair -->
+    <path d="M 134 16 L 146 38 L 158 16 M 146 38 L 146 58"/>
+  </g>
+  <!-- Sparkle dots -->
+  <g class="sig-sparkles">
+    <circle cx="165" cy="20" r="1.5" fill="#FF69B4" opacity="0.8">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite"/>
+      <animate attributeName="r" values="1;2;1" dur="1.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="172" cy="35" r="1" fill="#FFB6C1" opacity="0.6">
+      <animate attributeName="opacity" values="0.2;0.9;0.2" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+      <animate attributeName="r" values="0.8;1.8;0.8" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+    </circle>
+    <circle cx="168" cy="50" r="1.2" fill="#FF1493" opacity="0.7">
+      <animate attributeName="opacity" values="0.4;1;0.4" dur="1.8s" repeatCount="indefinite" begin="0.3s"/>
+      <animate attributeName="r" values="0.8;1.5;0.8" dur="1.8s" repeatCount="indefinite" begin="0.3s"/>
+    </circle>
+    <!-- Extra sparkles scattered -->
+    <circle cx="10" cy="12" r="1" fill="#FF69B4" opacity="0.5">
+      <animate attributeName="opacity" values="0;0.8;0" dur="2.5s" repeatCount="indefinite" begin="1s"/>
+    </circle>
+    <circle cx="155" cy="55" r="0.8" fill="#FFB6C1" opacity="0.4">
+      <animate attributeName="opacity" values="0;0.7;0" dur="2s" repeatCount="indefinite" begin="0.7s"/>
+    </circle>
+  </g>
+  <!-- Underline swash -->
+  <path d="M 16 64 Q 80 70 160 62" fill="none" stroke="#FF1493" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+</svg>

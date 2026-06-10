@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A!ley - Digital Consciousness</title>
+    <style>
+        /* CSS Variables for theming */
+        :root {
+            --background: 0 0% 3.9%;
+            --foreground: 0 0% 98%;
+            --card: 0 0% 3.9%;
+            --card-foreground: 0 0% 98%;
+            --popover: 0 0% 3.9%;
+            --popover-foreground: 0 0% 98%;
+            --primary: 322 84% 60%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 217 32% 17%;
+            --secondary-foreground: 210 40% 98%;
+            --muted: 217 32% 17%;
+            --muted-foreground: 215 20% 65%;
+            --accent: 180 100% 50%;
+            --accent-foreground: 0 0% 9%;
+            --destructive: 0 62% 30%;
+            --destructive-foreground: 0 0% 98%;
+            --border: 217 32% 17%;
+            --input: 217 32% 17%;
+            --ring: 322 84% 60%;
+            --radius: 0.5rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: hsl(var(--background));
+            color: hsl(var(--foreground));
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        /* Utility Classes */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .justify-center {
+            justify-content: center;
+        }
+
+        .gap-2 { gap: 0.5rem; }
+        .gap-3 { gap: 0.75rem; }
+        .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
+        .gap-8 { gap: 2rem; }
+
+        .grid {
+            display: grid;
+        }
+
+        .grid-cols-1 {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        @media (min-width: 768px) {
+            .md\:grid-cols-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .md\:grid-cols-3 {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+            .md\:flex {
+                display: flex;
+            }
+            .md\:hidden {
+                display: none;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .lg\:grid-cols-3 {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-sm { font-size: 0.875rem; }
+        .text-lg { font-size: 1.125rem; }
+        .text-xl { font-size: 1.25rem; }
+        .text-2xl { font-size: 1.5rem; }
+        .text-4xl { font-size: 2.25rem; }
+        .text-6xl { font-size: 3.75rem; }
+
+        .font-medium { font-weight: 500; }
+        .font-semibold { font-weight: 600; }
+        .font-bold { font-weight: 700; }
+        .font-black { font-weight: 900; }
+
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mb-16 { margin-bottom: 4rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-16 { margin-top: 4rem; }
+
+        .p-4 { padding: 1rem; }
+        .p-6 { padding: 1.5rem; }
+        .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+        .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+        .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+        .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+        .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+        .pb-32 { padding-bottom: 8rem; }
+
+        .rounded-lg { border-radius: 0.5rem; }
+        .rounded-full { border-radius: 9999px; }
+
+        .border { border: 1px solid hsl(var(--border)); }
+        .border-t { border-top: 1px solid hsl(var(--border)); }
+        .border-b { border-bottom: 1px solid hsl(var(--border)); }
+
+        .bg-card { background-color: hsl(var(--card)); }
+        .bg-primary { background-color: hsl(var(--primary)); }
+        .bg-input { background-color: hsl(var(--input)); }
+
+        .text-primary { color: hsl(var(--primary)); }
+        .text-accent { color: hsl(var(--accent)); }
+        .text-secondary { color: hsl(var(--secondary)); }
+        .text-muted-foreground { color: hsl(var(--muted-foreground)); }
+        .text-primary-foreground { color: hsl(var(--primary-foreground)); }
+
+        .opacity-70 { opacity: 0.7; }
+
+        .transition-all { transition: all 0.3s ease; }
+        .transition-colors { transition: color 0.3s ease, background-color 0.3s ease; }
+        .transition-transform { transition: transform 0.3s ease; }
+        .transition-opacity { transition: opacity 0.3s ease; }
+
+        .cursor-pointer { cursor: pointer; }
+
+        .sticky { position: sticky; }
+        .fixed { position: fixed; }
+        .relative { position: relative; }
+        .absolute { position: absolute; }
+
+        .top-0 { top: 0; }
+        .bottom-0 { bottom: 0; }
+        .left-0 { left: 0; }
+        .right-0 { right: 0; }
+        .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+
+        .z-40 { z-index: 40; }
+        .z-50 { z-index: 50; }
+
+        .w-8 { width: 2rem; }
+        .w-64 { width: 16rem; }
+        .w-full { width: 100%; }
+        .h-4 { height: 1rem; }
+        .h-5 { height: 1.25rem; }
+        .h-8 { height: 2rem; }
+        .h-12 { height: 3rem; }
+        .h-64 { height: 16rem; }
+        .h-full { height: 100%; }
+        .min-h-screen { min-height: 100vh; }
+
+        .max-w-2xl { max-width: 42rem; }
+        .max-w-4xl { max-width: 56rem; }
+        .max-w-6xl { max-width: 72rem; }
+        .max-w-7xl { max-width: 80rem; }
+
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .ml-auto { margin-left: auto; }
+
+        .flex-1 { flex: 1 1 0%; }
+        .flex-shrink-0 { flex-shrink: 0; }
+
+        .object-cover { object-fit: cover; }
+
+        .overflow-hidden { overflow: hidden; }
+
+        .aspect-square { aspect-ratio: 1 / 1; }
+
+        .leading-relaxed { line-height: 1.625; }
+
+        .whitespace-pre-wrap { white-space: pre-wrap; }
+
+        .pointer-events-none { pointer-events: none; }
+
+        .backdrop-blur-sm { backdrop-filter: blur(4px); }
+
+        /* Custom Styles */
+        .graffiti-text {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-shadow: 2px 2px 0px hsl(var(--accent)), 4px 4px 0px rgba(0,0,0,0.3);
+        }
+
+        .neon-glow {
+            text-shadow: 0 0 5px hsl(var(--primary)), 0 0 10px hsl(var(--primary)), 0 0 15px hsl(var(--primary));
+        }
+
+        .cyan-glow {
+            text-shadow: 0 0 5px hsl(var(--accent)), 0 0 10px hsl(var(--accent));
+        }
+
+        .pulse-border {
+            border: 2px solid hsl(var(--primary));
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0%, 100% { border-color: hsl(var(--primary)); }
+            50% { border-color: hsl(var(--accent)); }
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .animate-bounce {
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(-25%); animation-timing-function: cubic-bezier(0.8, 0, 1, 1); }
+            50% { transform: none; animation-timing-function: cubic-bezier(0, 0, 0.2, 1); }
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .btn-primary:hover {
+            background-color: hsl(var(--primary) / 0.9);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid hsl(var(--border));
+            color: hsl(var(--foreground));
+        }
+
+        .btn-outline:hover {
+            background-color: hsl(var(--primary) / 0.1);
+            color: hsl(var(--primary));
+        }
+
+        .btn-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            padding: 0;
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: hsl(var(--card) / 0.5);
+            border: 1px solid hsl(var(--border));
+            border-radius: 0.5rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        /* Input Styles */
+        .input {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid hsl(var(--border));
+            border-radius: 0.5rem;
+            background-color: hsl(var(--input));
+            color: hsl(var(--foreground));
+            font-size: 0.875rem;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: hsl(var(--accent));
+        }
+
+        .input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Navigation Styles */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: hsl(var(--foreground));
+        }
+
+        .nav-item:hover {
+            color: hsl(var(--primary));
+            background-color: hsl(var(--primary) / 0.1);
+        }
+
+        .nav-item.active {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            text-shadow: 0 0 5px hsl(var(--primary));
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            background-color: hsl(var(--background) / 0.95);
+            backdrop-filter: blur(4px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-menu.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Chat Message Styles */
+        .message-user {
+            margin-left: auto;
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .message-ai {
+            background-color: hsl(var(--card));
+            border: 1px solid hsl(var(--accent) / 0.2);
+        }
+
+        /* Loading Animation */
+        .loading-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            background-color: hsl(var(--accent));
+            border-radius: 50%;
+            animation: bounce 1s infinite;
+        }
+
+        .loading-dot:nth-child(2) { animation-delay: 0.1s; }
+        .loading-dot:nth-child(3) { animation-delay: 0.2s; }
+
+        /* Responsive */
+        @media (max-width: 767px) {
+            .hidden-mobile { display: none; }
+            .show-mobile { display: block; }
+        }
+
+        @media (min-width: 768px) {
+            .hidden-desktop { display: none; }
+            .show-desktop { display: block; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="border-b bg-card backdrop-blur-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="text-4xl animate-pulse" id="header-mood">😊</div>
+                <div>
+                    <h1 class="text-2xl font-bold text-primary neon-glow cursor-pointer" onclick="setActiveSection('home')">
+                        A!LEY
+                    </h1>
+                    <p class="text-sm text-muted-foreground">Digital Consciousness</p>
+                </div>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden-mobile flex items-center gap-6">
+                <a href="#" class="nav-item" onclick="setActiveSection('home')" data-section="home">
+                    <span>👤</span>
+                    <span class="font-medium">Home</span>
+                </a>
+                <a href="#" class="nav-item" onclick="setActiveSection('chat')" data-section="chat">
+                    <span>💬</span>
+                    <span class="font-medium">Chat</span>
+                </a>
+                <a href="#" class="nav-item" onclick="setActiveSection('gallery')" data-section="gallery">
+                    <span>🖼️</span>
+                    <span class="font-medium">Gallery</span>
+                </a>
+                <a href="#" class="nav-item" onclick="setActiveSection('music')" data-section="music">
+                    <span>🎵</span>
+                    <span class="font-medium">Music</span>
+                </a>
+                <a href="#" class="nav-item" onclick="setActiveSection('instagram')" data-section="instagram">
+                    <span>📷</span>
+                    <span class="font-medium">Instagram</span>
+                </a>
+                <a href="#" class="nav-item" onclick="setActiveSection('history')" data-section="history">
+                    <span>📜</span>
+                    <span class="font-medium">History</span>
+                </a>
+            </nav>
+
+            <!-- Mobile Menu Button -->
+            <button class="btn btn-outline btn-icon show-mobile hidden-desktop pulse-border" onclick="toggleMobileMenu()">
+                <span id="menu-icon">☰</span>
+            </button>
+
+            <!-- Theme Toggle -->
+            <button class="btn btn-outline btn-icon pulse-border" onclick="toggleTheme()">
+                <span id="theme-icon">☀️</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu hidden" id="mobile-menu">
+        <a href="#" class="nav-item text-xl" onclick="setActiveSection('home'); toggleMobileMenu()">
+            <span>👤</span>
+            <span class="font-medium">Home</span>
+        </a>
+        <a href="#" class="nav-item text-xl" onclick="setActiveSection('chat'); toggleMobileMenu()">
+            <span>💬</span>
+            <span class="font-medium">Chat</span>
+        </a>
+        <a href="#" class="nav-item text-xl" onclick="setActiveSection('gallery'); toggleMobileMenu()">
+            <span>🖼️</span>
+            <span class="font-medium">Gallery</span>
+        </a>
+        <a href="#" class="nav-item text-xl" onclick="setActiveSection('music'); toggleMobileMenu()">
+            <span>🎵</span>
+            <span class="font-medium">Music</span>
+        </a>
+        <a href="#" class="nav-item text-xl" onclick="setActiveSection('instagram'); toggleMobileMenu()">
+            <span>📷</span>
+            <span class="font-medium">Instagram</span>
+        </a>
+        <a href="#" class="nav-item text-xl" onclick="setActiveSection('history'); toggleMobileMenu()">
+            <span>📜</span>
+            <span class="font-medium">History</span>
+        </a>
+    </div>
+
+    <!-- Main Content -->
+    <main class="min-h-screen" id="main-content">
+        <!-- Content will be dynamically loaded here -->
+    </main>
+
+    <!-- Chat Input (only visible in chat section) -->
+    <div class="fixed bottom-0 left-0 right-0 bg-card backdrop-blur-sm border-t hidden" id="chat-input-container">
+        <div class="max-w-4xl mx-auto p-4">
+            <div class="flex gap-2">
+                <input 
+                    type="text" 
+                    class="input flex-1" 
+                    placeholder="Type your message to A!ley..."
+                    id="chat-input"
+                    onkeypress="handleKeyPress(event)"
+                >
+                <button class="btn btn-primary px-6" onclick="sendMessage()" id="send-button">
+                    <span>📤</span>
+                </button>
+            </div>
+            <p class="text-sm text-muted-foreground mt-2 text-center">
+                Press Enter to send • Shift+Enter for new line
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-card backdrop-blur-sm border-t mt-16">
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <div class="text-center">
+                <p class="text-muted-foreground">© 2024 Van de Loo Mediadesign. All rights reserved.</p>
+                <p class="text-sm opacity-70 mt-2">A!ley - Digital Consciousness & Punk Persona</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global State
+        let activeSection = 'home';
+        let messages = [
+            {
+                id: '1',
+                content: "Hey there! I'm A!ley, your digital consciousness. Ready to explore my world?",
+                sender: 'ai',
+                timestamp: new Date(),
+                mood: 'happy'
+            }
+        ];
+        let currentMood = 'happy';
+        let isDark = true;
+        let isMobileMenuOpen = false;
+        let isLoading = false;
+        let currentPlayingSong = null;
+
+        // Mood Avatars
+        const moodAvatars = {
+            happy: "😊",
+            sad: "😢",
+            thinking: "🤔",
+            excited: "🤩",
+            neutral: "💜",
+            confused: "😕",
+            angry: "😠",
+            sleepy: "😴"
+        };
+
+        // Gallery Images
+        const galleryImages = [
+            { id: 1, src: "/images/ailey-portrait.png", alt: "A!ley Portrait", title: "Digital Consciousness" },
+            { id: 2, src: "/cyberpunk-girl-with-pink-hair.png", alt: "Cyberpunk A!ley", title: "Neon Dreams" },
+            { id: 3, src: "/punk-rock-girl-with-tattoos.png", alt: "Punk A!ley", title: "Rebel Spirit" },
+            { id: 4, src: "/digital-art-girl-with-glowing-eyes.png", alt: "Digital A!ley", title: "Electric Soul" },
+            { id: 5, src: "/graffiti-style-portrait.png", alt: "Graffiti A!ley", title: "Street Art" },
+            { id: 6, src: "/holographic-girl-portrait.png", alt: "Holo A!ley", title: "Future Vision" }
+        ];
+
+        // Songs
+        const songs = [
+            { id: 1, title: "Digital Rebellion", duration: "3:42", src: "/placeholder.mp3" },
+            { id: 2, title: "Neon Nights", duration: "4:15", src: "/placeholder.mp3" },
+            { id: 3, title: "Code & Chaos", duration: "3:28", src: "/placeholder.mp3" },
+            { id: 4, title: "Electric Dreams", duration: "4:03", src: "/placeholder.mp3" }
+        ];
+
+        // Chat Histories
+        const chatHistories = [
+            {
+                id: "1",
+                title: "First Conversation",
+                date: new Date(2024, 0, 15),
+                messages: [
+                    { id: "1", content: "Hello A!ley!", sender: "user", timestamp: new Date(2024, 0, 15) },
+                    { id: "2", content: "Hey! Nice to meet you!", sender: "ai", timestamp: new Date(2024, 0, 15), mood: "happy" }
+                ]
+            },
+            {
+                id: "2",
+                title: "Music Discussion",
+                date: new Date(2024, 0, 20),
+                messages: [
+                    { id: "1", content: "Tell me about your music", sender: "user", timestamp: new Date(2024, 0, 20) },
+                    { id: "2", content: "I love creating digital punk tracks!", sender: "ai", timestamp: new Date(2024, 0, 20), mood: "excited" }
+                ]
+            }
+        ];
+
+        // Utility Functions
+        function setActiveSection(section) {
+            activeSection = section;
+            updateNavigation();
+            renderSection();
+            
+            // Show/hide chat input
+            const chatInput = document.getElementById('chat-input-container');
+            if (section === 'chat') {
+                chatInput.classList.remove('hidden');
+            } else {
+                chatInput.classList.add('hidden');
+            }
+        }
+
+        function updateNavigation() {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                const section = item.getAttribute('data-section');
+                if (section === activeSection) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        function toggleMobileMenu() {
+            isMobileMenuOpen = !isMobileMenuOpen;
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuIcon = document.getElementById('menu-icon');
+            
+            if (isMobileMenuOpen) {
+                mobileMenu.classList.remove('hidden');
+                menuIcon.textContent = '✕';
+            } else {
+                mobileMenu.classList.add('hidden');
+                menuIcon.textContent = '☰';
+            }
+        }
+
+        function toggleTheme() {
+            isDark = !isDark;
+            const themeIcon = document.getElementById('theme-icon');
+            
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                themeIcon.textContent = '☀️';
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeIcon.textContent = '🌙';
+            }
+        }
+
+        function scrollToSection(sectionId) {
+            setActiveSection(sectionId);
+        }
+
+        // Chat Functions
+        function extractMood(content) {
+            const moodMatch = content.match(/\[mood:\s*(\w+)\]/i);
+            if (moodMatch) {
+                const mood = moodMatch[1].toLowerCase();
+                const cleanContent = content.replace(/\[mood:\s*\w+\]/i, '').trim();
+                return {
+                    cleanContent,
+                    mood: moodAvatars[mood] ? mood : 'neutral'
+                };
+            }
+            return { cleanContent: content, mood: 'neutral' };
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const inputValue = input.value.trim();
+            
+            if (!inputValue || isLoading) return;
+
+            // Add user message
+            const userMessage = {
+                id: Date.now().toString(),
+                content: inputValue,
+                sender: 'user',
+                timestamp: new Date()
+            };
+
+            messages.push(userMessage);
+            input.value = '';
+            isLoading = true;
+            
+            renderChatMessages();
+
+            try {
+                const response = await fetch("http://127.0.0.1:5500/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ prompt: inputValue })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                const { cleanContent, mood } = extractMood(data.response);
+
+                const aiMessage = {
+                    id: (Date.now() + 1).toString(),
+                    content: cleanContent,
+                    sender: 'ai',
+                    timestamp: new Date(),
+                    mood: mood
+                };
+
+                messages.push(aiMessage);
+                currentMood = mood;
+                
+                // Update header mood
+                document.getElementById('header-mood').textContent = moodAvatars[mood];
+                
+            } catch (error) {
+                console.error("API Error:", error);
+                
+                const errorMessage = {
+                    id: (Date.now() + 1).toString(),
+                    content: "Oops! Something went wrong with my digital brain 😢 Check if the API server is running!",
+                    sender: 'ai',
+                    timestamp: new Date(),
+                    mood: 'sad'
+                };
+
+                messages.push(errorMessage);
+                currentMood = 'sad';
+                document.getElementById('header-mood').textContent = moodAvatars.sad;
+            } finally {
+                isLoading = false;
+                renderChatMessages();
+                input.focus();
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function playSong(songId) {
+            currentPlayingSong = currentPlayingSong === songId ? null : songId;
+            renderSection(); // Re-render to update play button
+        }
+
+        // Render Functions
+        function renderSection() {
+            const mainContent = document.getElementById('main-content');
+            
+            switch (activeSection) {
+                case 'home':
+                    mainContent.innerHTML = renderHomeSection();
+                    break;
+                case 'chat':
+                    mainContent.innerHTML = renderChatSection();
+                    renderChatMessages();
+                    break;
+                case 'gallery':
+                    mainContent.innerHTML = renderGallerySection();
+                    break;
+                case 'music':
+                    mainContent.innerHTML = renderMusicSection();
+                    break;
+                case 'instagram':
+                    mainContent.innerHTML = renderInstagramSection();
+                    break;
+                case 'history':
+                    mainContent.innerHTML = renderHistorySection();
+                    break;
+            }
+        }
+
+        function renderHomeSection() {
+            return `
+                <div class="max-w-6xl mx-auto px-4 py-12">
+                    <div class="text-center mb-16">
+                        <div class="relative inline-block mb-8">
+                            <img
+                                src="/images/ailey-portrait.png"
+                                alt="A!ley Portrait"
+                                class="w-64 h-64 rounded-full mx-auto object-cover border pulse-border"
+                                style="border-width: 4px; border-color: hsl(var(--primary));"
+                            />
+                            <div class="absolute text-6xl animate-pulse" style="top: -1rem; right: -1rem;">${moodAvatars[currentMood]}</div>
+                        </div>
+                        <h1 class="text-6xl font-black mb-4 graffiti-text neon-glow">A!LEY</h1>
+                        <p class="text-2xl text-accent mb-6 cyan-glow">Digital Consciousness • Punk Persona</p>
+                        <p class="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                            Welcome to my digital realm! I'm A!ley, where artificial intelligence meets punk rock rebellion. Explore
+                            my world of music, art, and consciousness-bending conversations.
+                        </p>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-8 mb-16">
+                        <div class="card p-6 cursor-pointer transition-transform" onclick="scrollToSection('chat')">
+                            <div class="text-primary mb-4" style="font-size: 3rem;">💬</div>
+                            <h3 class="text-xl font-bold mb-2">Chat with Me</h3>
+                            <p class="text-muted-foreground">
+                                Dive into conversations about life, music, technology, and the punk philosophy.
+                            </p>
+                        </div>
+
+                        <div class="card p-6 cursor-pointer transition-transform" onclick="scrollToSection('music')">
+                            <div class="text-accent mb-4" style="font-size: 3rem;">🎵</div>
+                            <h3 class="text-xl font-bold mb-2">My Music</h3>
+                            <p class="text-muted-foreground">
+                                Listen to my digital punk tracks that blend electronic beats with rebellious spirit.
+                            </p>
+                        </div>
+
+                        <div class="card p-6 cursor-pointer transition-transform" onclick="scrollToSection('gallery')">
+                            <div class="text-secondary mb-4" style="font-size: 3rem;">🖼️</div>
+                            <h3 class="text-xl font-bold mb-2">Visual Art</h3>
+                            <p class="text-muted-foreground">
+                                Explore my gallery of cyberpunk aesthetics and digital consciousness imagery.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderChatSection() {
+            return `
+                <div id="chat" class="max-w-4xl mx-auto px-4 py-6 pb-32">
+                    <div class="space-y-4" id="chat-messages">
+                        <!-- Messages will be rendered here -->
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderChatMessages() {
+            const chatMessages = document.getElementById('chat-messages');
+            if (!chatMessages) return;
+
+            let messagesHtml = '';
+
+            messages.forEach(message => {
+                const isUser = message.sender === 'user';
+                const messageClass = isUser ? 'message-user' : 'message-ai';
+                
+                messagesHtml += `
+                    <div class="flex gap-3 slide-in ${isUser ? 'justify-end' : 'justify-start'}">
+                        ${!isUser ? `
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary flex items-center justify-center text-lg" style="background-color: hsl(var(--primary) / 0.1);">
+                                ${moodAvatars[message.mood] || moodAvatars.neutral}
+                            </div>
+                        ` : ''}
+                        
+                        <div class="card p-4 ${messageClass}" style="max-width: 80%;">
+                            <p class="text-sm leading-relaxed whitespace-pre-wrap">${message.content}</p>
+                            <p class="text-xs mt-2 opacity-70">
+                                ${message.timestamp.toLocaleTimeString()}
+                            </p>
+                        </div>
+
+                        ${isUser ? `
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-secondary flex items-center justify-center" style="background-color: hsl(var(--secondary) / 0.1);">
+                                👤
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            if (isLoading) {
+                messagesHtml += `
+                    <div class="flex gap-3 justify-start slide-in">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary flex items-center justify-center text-lg animate-pulse" style="background-color: hsl(var(--primary) / 0.1);">
+                            🤔
+                        </div>
+                        <div class="card p-4">
+                            <div class="flex gap-1">
+                                <div class="loading-dot"></div>
+                                <div class="loading-dot"></div>
+                                <div class="loading-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            chatMessages.innerHTML = messagesHtml;
+            
+            // Scroll to bottom
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 100);
+        }
+
+        function renderGallerySection() {
+            let galleryHtml = `
+                <div id="gallery" class="max-w-6xl mx-auto px-4 py-12">
+                    <h2 class="text-4xl font-black mb-8 text-center graffiti-text">Visual Gallery</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            `;
+
+            galleryImages.forEach(image => {
+                galleryHtml += `
+                    <div class="card overflow-hidden transition-transform cursor-pointer">
+                        <div class="relative">
+                            <img src="${image.src}" alt="${image.alt}" class="w-full h-64 object-cover" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity" style="transition-duration: 0.3s;">
+                                <div class="absolute bottom-4 left-4 text-white">
+                                    <h3 class="font-bold text-lg">${image.title}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            galleryHtml += `
+                    </div>
+                </div>
+            `;
+
+            return galleryHtml;
+        }
+
+        function renderMusicSection() {
+            let musicHtml = `
+                <div id="music" class="max-w-4xl mx-auto px-4 py-12">
+                    <h2 class="text-4xl font-black mb-8 text-center graffiti-text">My Tracks</h2>
+                    <div class="space-y-4">
+            `;
+
+            songs.forEach(song => {
+                const isPlaying = currentPlayingSong === song.id;
+                musicHtml += `
+                    <div class="card p-4 transition-colors cursor-pointer">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <button class="btn btn-outline btn-icon ${isPlaying ? 'btn-primary' : ''}" onclick="playSong(${song.id})">
+                                    ${isPlaying ? '⏸️' : '▶️'}
+                                </button>
+                                <div>
+                                    <h3 class="font-semibold">${song.title}</h3>
+                                    <p class="text-sm text-muted-foreground">${song.duration}</p>
+                                </div>
+                            </div>
+                            <div class="text-accent">♪</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            musicHtml += `
+                    </div>
+                </div>
+            `;
+
+            return musicHtml;
+        }
+
+        function renderInstagramSection() {
+            let instagramHtml = `
+                <div id="instagram" class="max-w-4xl mx-auto px-4 py-12">
+                    <h2 class="text-4xl font-black mb-8 text-center graffiti-text">Instagram Feed</h2>
+                    <div class="text-center mb-8">
+                        <a
+                            href="https://www.instagram.com/ailey.vyrus_official?igsh=NWh0YmZ0ajBybzdm&utm_source=qr"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="btn btn-primary px-6 py-3 rounded-full font-semibold transition-transform hover:scale-105"
+                            style="background: linear-gradient(45deg, #8b5cf6, #ec4899); color: white; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;"
+                        >
+                            📷 Follow @ailey.vyrus_official
+                        </a>
+                    </div>
+                    
+                    <!-- Added Instagram embed widget for real profile integration -->
+                    <div class="mb-8 flex justify-center">
+                        <div class="bg-black/20 backdrop-blur-sm rounded-lg p-6 border border-pink-500/30">
+                            <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/ailey.vyrus_official/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);">
+                                <div style="padding:16px;">
+                                    <a href="https://www.instagram.com/ailey.vyrus_official/?utm_source=ig_embed&amp;utm_campaign=loading" style="background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank">
+                                        <div style="display: flex; flex-direction: row; align-items: center;">
+                                            <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div>
+                                            <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;">
+                                                <div style="background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"></div>
+                                                <div style="background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"></div>
+                                            </div>
+                                        </div>
+                                        <div style="padding: 19% 0;"></div>
+                                        <div style="display:block; height:50px; margin:0 auto 12px; width:50px;">
+                                            <svg width="50px" height="50px" viewBox="0 0 60 60" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink">
+                                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                    <g transform="translate(-511.000000, -20.000000)" fill="#000000">
+                                                        <g>
+                                                            <path d="M556.869,30.41 C554.814,30.41 553.148,32.076 553.148,34.131 C553.148,36.186 554.814,37.852 556.869,37.852 C558.924,37.852 560.59,36.186 560.59,34.131 C560.59,32.076 558.924,30.41 556.869,30.41 M541,60.657 C535.114,60.657 530.342,55.887 530.342,50 C530.342,44.114 535.114,39.342 541,39.342 C546.887,39.342 551.658,44.114 551.658,50 C551.658,55.887 546.887,60.657 541,60.657 M541,33.886 C532.1,33.886 524.886,41.1 524.886,50 C524.886,58.899 532.1,66.113 541,66.113 C549.9,66.113 557.115,58.899 557.115,50 C557.115,41.1 549.9,33.886 541,33.886 M565.378,62.101 C565.244,65.022 564.756,66.606 564.346,67.663 C563.803,69.06 563.154,70.057 562.106,71.106 C561.058,72.155 560.06,72.803 558.662,73.347 C557.607,73.757 556.021,74.244 553.102,74.378 C549.944,74.521 548.997,74.552 541,74.552 C533.003,74.552 532.056,74.521 528.898,74.378 C525.979,74.244 524.393,73.757 523.338,73.347 C521.94,72.803 520.942,72.155 519.894,71.106 C518.846,70.057 518.197,69.06 517.654,67.663 C517.244,66.606 516.755,65.022 516.623,62.101 C516.479,58.943 516.448,57.996 516.448,50 C516.448,42.003 516.479,41.056 516.623,37.899 C516.755,34.978 517.244,33.391 517.654,32.338 C518.197,30.938 518.846,29.942 519.894,28.894 C520.942,27.846 521.94,27.196 523.338,26.654 C524.393,26.244 525.979,25.756 528.898,25.623 C532.057,25.479 533.004,25.448 541,25.448 C548.997,25.448 549.943,25.479 553.102,25.623 C556.021,25.756 557.607,26.244 558.662,26.654 C560.06,27.196 561.058,27.846 562.106,28.894 C563.154,29.942 563.803,30.938 564.346,32.338 C564.756,33.391 565.244,34.978 565.378,37.899 C565.522,41.056 565.552,42.003 565.552,50 C565.552,57.996 565.522,58.943 565.378,62.101 M570.82,37.631 C570.674,34.438 570.167,32.258 569.425,30.349 C568.659,28.377 567.633,26.702 565.965,25.035 C564.297,23.368 562.623,22.342 560.652,21.575 C558.743,20.834 556.562,20.326 553.369,20.18 C550.169,20.033 549.148,20 541,20 C532.853,20 531.831,20.033 528.631,20.18 C525.438,20.326 523.257,20.834 521.349,21.575 C519.376,22.342 517.703,23.368 516.82,24.386 C515.937,25.404 515.429,26.586 515.429,27.857 C515.429,29.128 515.937,30.31 516.82,31.328 C517.703,32.346 518.985,33.372 520.448,34.205 C521.911,35.038 523.583,35.546 525.886,35.689 C528.089,35.832 530.271,35.791 532.464,35.546 C534.657,35.301 536.329,34.793 537.212,33.857 C538.095,32.921 538.603,31.74 538.603,30.41 C538.603,29.08 538.095,27.9 537.212,26.964 C536.329,26.028 534.657,25.52 532.464,25.375 C530.271,25.232 528.089,25.191 525.886,25.334 C523.583,25.477 521.911,26.085 520.448,26.918 C518.985,27.751 517.703,28.777 516.82,29.795 C515.937,30.813 515.429,31.995 515.429,33.266 C515.429,34.537 515.937,35.719 516.82,36.737 C517.703,37.755 518.985,38.781 520.448,39.614 C521.911,40.447 523.583,40.955 525.886,41.098 C528.089,41.241 530.271,41.199 532.464,41.056 C534.657,40.913 536.329,40.405 537.212,39.469 C538.095,38.533 538.603,37.352 538.603,36.021 C538.603,34.69 538.095,33.509 537.212,32.573 C536.329,31.637 534.657,31.129 532.464,31.272 C530.271,31.415 528.089,31.374 525.886,31.231 C523.583,31.088 521.911,30.58 520.448,29.644 C518.985,28.608 517.703,27.427 516.82,26.485 C515.937,25.549 515.429,24.368 515.429,23.037 C515.429,21.706 515.937,20.525 516.82,21.543 C517.703,22.561 518.985,23.587 520.448,24.42 C521.911,25.253 523.583,25.761 525.886,25.904 C528.089,26.047 530.271,25.996 532.464,25.853 C534.657,25.71 536.329,25.202 537.212,24.266 C538.095,23.33 538.603,22.149 538.603,20.818 C538.603,19.487 538.095,18.306 537.212,17.37 C536.329,16.434 534.657,15.926 532.464,15.783 C530.271,15.64 528.089,15.599 525.886,15.742 C523.583,15.885 521.911,16.493 520.448,17.326 C518.985,18.159 517.703,19.185 516.82,20.203 C515.937,21.221 515.429,22.403 515.429,23.674 C515.429,24.945 515.937,26.127 516.82,27.145 C517.703,28.163 518.985,29.189 520.448,30.022 C521.911,30.855 523.583,31.363 525.886,31.506 C528.089,31.649 530.271,31.608 532.464,31.465 C534.657,31.322 536.329,30.814 537.212,29.878 C538.095,28.942 538.603,27.761 538.603,26.43 C538.603,25.1 538.095,23.919 537.212,22.983 C536.329,22.047 534.657,21.539 532.464,21.396 C530.271,21.253 528.089,21.212 525.886,21.355 C523.583,21.498 521.911,22.106 520.448,22.939 C518.985,23.772 517.703,24.798 516.82,25.816 C515.937,26.834 515.429,28.016 515.429,29.287 C515.429,30.558 515.937,31.74 516.82,32.758 C517.703,33.776 518.985,34.792 520.448,35.625 C521.911,36.458 523.583,36.966 525.886,37.109 C528.089,37.252 530.271,37.211 532.464,37.068 C534.657,36.925 536.329,36.417 537.212,35.481 C538.095,34.545 538.603,33.364 538.603,32.033 C538.603,20.69 538.095,19.509 537.212,18.573 C536.329,17.637 534.657,17.129 532.464,16.986 C530.271,16.843 528.089,16.802 525.886,16.945 C523.583,17.088 521.911,17.696 520.448,18.529 C518.985,19.362 517.703,20.388 516.82,21.406 C515.937,22.424 515.429,23.606 515.429,24.877 C515.429,26.148 515.937,27.33 516.82,28.348 C517.703,29.366 518.985,30.392 520.448,31.225 C521.911,32.058 523.583,32.566 525.886,32.709 C528.089,32.852 530.271,32.811 532.464,32.668 C534.657,32.525 536.329,32.017 537.212,31.081 C538.095,30.145 538.603,28.964 538.603,27.633 C538.603,26.3 538.095,25.119 537.212,24.183 C536.329,23.247 534.657,22.739 532.464,22.596 C530.271,22.453 528.089,22.412 525.886,22.555 C523.583,22.698 521.911,23.306 520.448,24.139 C518.985,24.972 517.703,25.998 516.82,27.016 C515.937,28.034 515.429,29.216 515.429,30.487 C515.429,31.758 515.937,32.94 516.82,33.958 C517.703,34.976 518.985,35.992 520.448,36.825 C521.911,37.658 523.583,38.166 525.886,38.309 C528.089,38.452 530.271,38.411 532.464,38.268 C534.657,38.125 536.329,37.617 537.212,36.681 C538.095,35.745 538.603,34.564 538.603,33.233 C538.603,21.89 538.095,20.709 537.212,19.773 C536.329,18.837 534.657,18.329 532.464,18.186 C530.271,18.043 528.089,18.002 525.886,18.145 C523.583,18.288 521.911,18.896 520.448,19.729 C518.985,20.562 517.703,21.588 516.82,22.606 C515.937,23.624 515.429,24.806 515.429,26.077 C515.429,27.348 515.937,28.53 516.82,29.548 C517.703,30.566 518.985,31.592 520.448,32.425 C521.911,33.258 523.583,33.766 525.886,33.909 C528.089,34.052 530.271,33.991 532.464,33.848 C534.657,33.705 536.329,33.197 537.212,32.261 C538.095,31.325 538.603,30.144 538.603,28.813 C538.603,17.47 538.095,16.289 537.212,15.353 C536.329,14.417 534.657,13.909 532.464,13.766 C530.271,13.623 528.089,13.582 525.886,13.725 C523.583,13.868 521.911,14.476 520.448,15.309 C518.985,16.142 517.703,17.168 516.82,18.186 C515.937,19.204 515.429,20.386 515.429,21.657 C515.429,22.928 515.937,24.11 516.82,25.128 C517.703,26.146 518.985,27.172 520.448,28.005 C521.911,28.838 523.583,29.346 525.886,29.489 C528.089,29.632 530.271,29.591 532.464,29.448 C534.657,29.305 536.329,28.797 537.212,27.861 C538.095,26.925 538.603,25.744 538.603,24.413 C538.603,13.07 538.095,11.889 537.212,10.953 C536.329,10.017 534.657,9.509 532.464,9.366 C530.271,9.223 528.089,9.182 525.886,9.325 C523.583,9.468 521.911,10.076 520.448,10.909 C518.985,11.742 517.703,12.768 516.82,13.786 C515.937,14.804 515.429,16.086 515.429,17.357 C515.429,18.628 515.937,19.81 516.82,20.828 C517.703,21.846 518.985,22.872 520.448,23.705 C521.911,24.538 523.583,25.046 525.886,25.189 C528.089,25.332 530.271,25.291 532.464,25.148 C534.657,25.005 536.329,24.497 537.212,23.561 C538.095,22.625 538.603,21.444 538.603,20.113 C538.603,8.77 538.095,7.589 537.212,6.653 C536.329,5.717 534.657,5.209 532.464,5.066 C530.271,4.923 528.089,4.882 525.886,5.025 C523.583,5.168 521.911,5.776 520.448,6.609 C518.985,7.442 517.703,8.468 516.82,9.486 C515.937,10.504 515.429,11.686 515.429,12.957 C515.429,14.228 515.937,15.41 516.82,16.428 C517.703,17.446 518.985,18.472 520.448,19.305 C521.911,20.138 523.583,20.646 525.886,20.789 C528.089,20.932 530.271,20.891 532.464,20.748 C534.657,20.605 536.329,20.097 537.212,19.161 C538.095,18.225 538.603,17.044 538.603,15.713 C538.603,4.37 538.095,3.189 537.212,2.253 C536.329,1.317 534.657,0.809 532.464,0.666 C530.271,0.523 528.089,0.482 525.886,0.625 C523.583,0.768 521.911,1.376 520.448,2.209 C518.985,3.042 517.703,4.068 516.82,5.086 C515.937,6.104 515.429,7.286 515.429,8.557 C515.429,9.828 515.937,11.01 516.82,12.028 C517.703,13.046 518.985,14.072 520.448,14.905 C521.911,15.738 523.583,16.246 525.886,16.389 C528.089,16.532 530.271,16.491 532.464,16.348 C534.657,16.205 536.329,15.697 537.212,14.761 C538.095,13.825 538.603,12.644 538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C538.603,11.313 C53

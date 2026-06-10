@@ -1,0 +1,19 @@
+:root {
+  --ailey-primary: #ff1493;  /* Hot Pink */
+  --ailey-secondary: #00ffff; /* Cyan */
+  --ailey-accent: #8a2be2;   /* Purple */
+  --ailey-bg: #0a0a0a;       /* Dark */
+}
+
+body.ailey-theme {
+  background: var(--ailey-bg);
+  color: #f8f8f8;
+}
+
+.ailey-title {
+  color: var(--ailey-primary);
+}
+
+.ailey-accent {
+  color: var(--ailey-accent);
+}

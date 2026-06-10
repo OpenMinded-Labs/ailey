@@ -1,0 +1,61 @@
+# ═══════════════════════════════════════════════════════════════
+# Ailey Showcase — .gitignore
+# Safety net: never commit data, secrets, builds or model weights.
+# ═══════════════════════════════════════════════════════════════
+
+# ── Secrets / Config ──────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+portal/config.php
+**/email_accounts.json
+**/admin_devlink.json
+*.hash
+
+# ── Private user / runtime data ───────────────────────────────
+ailey_users/
+**/ailey_users/
+**/email_inbox.json
+*.jsonl
+*.sqlite3
+chromadb/
+lancedb/
+
+# ── Model weights (multi-GB) ──────────────────────────────────
+*.gguf
+*.safetensors
+*.bin
+*.pt
+*.npz
+mlx_models/
+gguf_models/
+
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+venv/
+env/
+
+# ── Node / Next.js / Tauri ────────────────────────────────────
+node_modules/
+.next/
+out/
+dist/
+.pnpm-store/
+*.tsbuildinfo
+ailey-frontend/src-tauri/target/
+**/target/
+
+# ── Backups / temp / OS ───────────────────────────────────────
+*.backup
+*.backup*
+*.bak
+*.old
+*.log
+*.tmp
+.DS_Store
+Thumbs.db

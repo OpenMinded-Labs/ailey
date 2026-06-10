@@ -1,0 +1,994 @@
+<?php
+/**
+ * A!ley Portal — Learning Hub (PHP-native)
+ *
+ * All curricula data, quiz evaluation, progress tracking — direct PHP/MySQL.
+ * Only "Frag Ailey" (LLM lessons) goes through the poller to Python backend.
+ * Requires login + admin-granted access.
+ */
+require_once __DIR__ . '/layout.php';
+if (!$user) { header('Location: /login'); exit; }
+
+portal_head('Learning');
+$userId = $user['id'];
+$userName = htmlspecialchars($user['display_name'] ?? 'User');
+?>
+
+<style>
+/* ── Base ── */
+.learning-page { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+.learning-header { text-align: center; margin-bottom: 2rem; }
+.learning-header h1 { font-size: 1.75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+.learning-header p { color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem; }
+.learning-stats { display: flex; justify-content: center; gap: 2rem; margin-top: 1rem; font-size: 0.9rem; }
+.learning-stats .stat { font-weight: 600; }
+.learning-stats .stat-label { color: var(--text-muted); font-size: 0.75rem; }
+
+/* ── Track Grid ── */
+.track-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+.track-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; cursor: pointer; transition: border-color 0.2s, transform 0.1s; }
+.track-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+.track-card-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
+.track-emoji { font-size: 2rem; }
+.track-level-btn { font-size: 0.65rem; color: var(--text-muted); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; cursor: pointer; background: transparent; }
+.track-level-btn:hover { color: var(--primary); border-color: var(--primary); }
+.track-name { font-weight: 600; font-size: 1rem; }
+.track-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; }
+.progress-bar { height: 6px; background: var(--input-bg); border-radius: 3px; overflow: hidden; margin-top: 0.75rem; }
+.progress-fill { height: 100%; background: var(--primary); border-radius: 3px; transition: width 0.5s ease; }
+.progress-labels { display: flex; justify-content: space-between; margin-top: 0.25rem; font-size: 0.65rem; color: var(--text-muted); }
+
+/* ── Track Detail ── */
+.track-detail { max-width: 800px; margin: 0 auto; }
+.back-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 0.85rem; color: var(--text-muted); cursor: pointer; background: none; border: none; padding: 0; margin-bottom: 1rem; }
+.back-btn:hover { color: var(--primary); }
+.track-detail-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+.track-detail-header .td-emoji { font-size: 3rem; flex-shrink: 0; }
+.track-detail-header h2 { font-size: 1.5rem; font-weight: 700; }
+.track-detail-header p { font-size: 0.8rem; color: var(--text-muted); }
+
+.unit-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.unit-item { display: flex; flex-direction: column; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; transition: border-color 0.2s; overflow: hidden; }
+.unit-item:hover { border-color: var(--primary); }
+.unit-main { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; cursor: pointer; }
+.unit-actions { display: flex; gap: 0.5rem; padding: 0 1rem 0.6rem 3.5rem; }
+.unit-action-btn { font-size: 0.7rem; padding: 0.25rem 0.6rem; border-radius: 4px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.unit-action-btn:hover { border-color: var(--primary); color: var(--primary); }
+.unit-action-btn.ask-btn:hover { background: rgba(var(--primary-rgb,139,92,246),0.1); }
+.unit-action-btn.quiz-btn:hover { background: rgba(34,197,94,0.1); border-color: #22c55e; color: #22c55e; }
+.unit-num { width: 2rem; height: 2rem; border-radius: 50%; background: rgba(var(--primary-rgb,139,92,246),0.1); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; color: var(--primary); flex-shrink: 0; }
+.unit-check { background: rgba(34,197,94,0.15); color: #22c55e; }
+.unit-info { flex: 1; min-width: 0; }
+.unit-title { font-weight: 500; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.unit-meta { font-size: 0.65rem; color: var(--text-muted); display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.unit-best-score { font-size: 0.6rem; background: rgba(34,197,94,0.1); color: #4ade80; padding: 1px 5px; border-radius: 3px; }
+
+/* ── Unit View ── */
+.unit-view { max-width: 800px; margin: 0 auto; }
+.unit-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.unit-tab { padding: 0.5rem 1rem; font-size: 0.85rem; font-weight: 500; border-bottom: 2px solid transparent; cursor: pointer; color: var(--text-muted); background: none; border-top: 0; border-left: 0; border-right: 0; transition: color 0.2s, border-color 0.2s; white-space: nowrap; }
+.unit-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+.unit-tab:hover { color: var(--text); }
+
+.theory-content { font-size: 0.9rem; line-height: 1.8; white-space: pre-wrap; word-wrap: break-word; }
+.example-block { background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; overflow-x: auto; }
+.example-label { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+.example-code { font-family: 'Fira Code', 'Cascadia Code', monospace; font-size: 0.8rem; white-space: pre-wrap; overflow-x: auto; }
+
+/* ── Quiz ── */
+.quiz-question { border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+.quiz-question.correct { border-color: #22c55e40; background: #22c55e08; }
+.quiz-question.incorrect { border-color: #ef444440; background: #ef444408; }
+.quiz-type-badge { font-size: 0.65rem; font-family: monospace; background: var(--input-bg); padding: 2px 6px; border-radius: 4px; }
+.quiz-text { font-size: 0.9rem; font-weight: 500; margin: 0.75rem 0; }
+.quiz-options { display: flex; flex-direction: column; gap: 0.5rem; }
+.quiz-option { width: 100%; text-align: left; padding: 0.5rem 0.75rem; border: 1px solid var(--border); border-radius: 6px; background: transparent; cursor: pointer; font-size: 0.85rem; color: var(--text); transition: border-color 0.15s, background 0.15s; }
+.quiz-option:hover { border-color: var(--primary); }
+.quiz-option.selected { border-color: var(--primary); background: rgba(var(--primary-rgb,139,92,246),0.1); }
+.quiz-option.selected.correct-answer { border-color: #22c55e; background: #22c55e15; }
+.quiz-option.selected.wrong-answer { border-color: #ef4444; background: #ef444415; }
+.quiz-option:not(.selected).correct-answer { border-color: #22c55e80; background: #22c55e08; }
+.quiz-option:disabled { cursor: default; opacity: 0.8; }
+.quiz-feedback { font-size: 0.75rem; padding: 0.5rem; border-radius: 4px; margin-top: 0.5rem; }
+.quiz-feedback.correct { background: #22c55e15; color: #4ade80; }
+.quiz-feedback.incorrect { background: #ef444415; color: #f87171; }
+.tf-row { display: flex; gap: 0.5rem; }
+.tf-row button { flex: 1; }
+.fill-input { width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; background: var(--input-bg); color: var(--text); font-size: 0.85rem; box-sizing: border-box; }
+.match-grid { display: flex; flex-direction: column; gap: 0.5rem; }
+.match-row { display: flex; align-items: center; gap: 0.5rem; }
+.match-left { flex: 1; padding: 0.4rem 0.6rem; background: var(--input-bg); border-radius: 6px; font-size: 0.82rem; }
+.match-select { flex: 1; padding: 0.4rem 0.6rem; border: 1px solid var(--border); border-radius: 6px; background: var(--input-bg); color: var(--text); font-size: 0.82rem; }
+.quiz-submit-btn { width: 100%; margin-top: 1rem; }
+.quiz-result { text-align: center; border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin-top: 1rem; }
+.quiz-result.passed { border-color: #22c55e50; background: #22c55e08; }
+.quiz-result.failed { border-color: #ef444450; background: #ef444408; }
+.quiz-result .big-emoji { font-size: 2.5rem; }
+.quiz-result .score { font-size: 1.5rem; font-weight: 700; }
+
+/* ── Lesson (LLM via poller) ── */
+.lesson-cta { text-align: center; padding: 3rem 1rem; }
+.lesson-content { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; font-size: 0.9rem; line-height: 1.7; white-space: pre-wrap; word-wrap: break-word; }
+.lesson-followup { display: flex; gap: 0.5rem; margin-top: 1rem; }
+.lesson-followup input { flex: 1; padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; background: var(--input-bg); color: var(--text); font-size: 0.85rem; min-width: 0; }
+
+/* ── Code exercise ── */
+.code-exercise textarea { width: 100%; min-height: 150px; font-family: 'Fira Code', monospace; font-size: 0.8rem; padding: 0.75rem; background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); resize: vertical; box-sizing: border-box; }
+.code-result { border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-top: 1rem; }
+.code-result.passed { border-color: #22c55e50; }
+.code-result.failed { border-color: #eab30850; }
+
+/* ── Open answer ── */
+.open-answer-wrapper { display: flex; flex-direction: column; gap: 0.4rem; }
+.open-textarea { width: 100%; min-height: 120px; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; background: var(--input-bg); color: var(--text); font-size: 0.85rem; line-height: 1.6; resize: vertical; box-sizing: border-box; font-family: inherit; }
+.open-textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(var(--primary-rgb,139,92,246),0.15); }
+.open-textarea:disabled { opacity: 0.7; cursor: default; }
+.open-meta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.25rem; }
+.open-word-count { font-size: 0.7rem; font-family: monospace; }
+.open-word-count.low { color: #f59e0b; }
+.open-word-count.ok { color: #22c55e; }
+.open-hint { font-size: 0.65rem; color: var(--text-muted); }
+
+/* ── Level dialog ── */
+.level-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.level-dialog { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; max-width: 380px; width: 100%; }
+.level-option { width: 100%; text-align: left; padding: 0.5rem 0.75rem; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 0.5rem; cursor: pointer; background: transparent; color: var(--text); font-size: 0.85rem; transition: border-color 0.15s; }
+.level-option:hover { border-color: var(--primary); }
+.level-option.active { border-color: var(--primary); background: rgba(var(--primary-rgb,139,92,246),0.1); color: var(--primary); }
+.level-actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
+.level-actions button { flex: 1; }
+
+/* ── IHK Exam Panel ── */
+.exam-panel { margin-top: 1.5rem; background: var(--card-bg,#1a1a2e); border: 1px solid rgba(245,158,11,0.3); border-radius: 12px; padding: 1.25rem; }
+.exam-input-row { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
+.exam-input-row input { flex: 1; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid var(--border,#333); background: var(--input-bg,#111); color: var(--text,#eee); font-size: 0.85rem; min-width: 0; }
+.exam-topic-row { display: flex; align-items: center; gap: 0.5rem; background: rgba(245,158,11,0.05); border: 1px solid rgba(245,158,11,0.2); border-radius: 8px; padding: 0.5rem 0.75rem; margin-bottom: 0.5rem; }
+.exam-topic-row span { flex: 1; font-size: 0.85rem; min-width: 0; }
+.exam-btn { font-size: 0.7rem; padding: 0.25rem 0.5rem; border-radius: 6px; cursor: pointer; border: 1px solid; background: transparent; color: var(--text); white-space: nowrap; }
+.exam-btn-drill { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); }
+.exam-btn-summary { background: rgba(99,102,241,0.1); border-color: rgba(99,102,241,0.3); }
+.exam-btn-remove { color: #f87171; cursor: pointer; background: none; border: none; font-size: 0.8rem; padding: 0; }
+.exam-suggestions { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
+.exam-suggestion-btn { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 99px; border: 1px solid var(--border,#333); background: transparent; color: var(--text-muted); cursor: pointer; }
+.exam-suggestion-btn:hover { border-color: rgba(245,158,11,0.5); color: #fbbf24; }
+
+/* ── Error / loading / disabled ── */
+.error-bar { background: #ef444420; border: 1px solid #ef444440; color: #f87171; padding: 0.75rem; border-radius: 8px; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; }
+
+/* ── Review Banner ── */
+.review-banner { display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(139,92,246,0.1)); border: 1px solid rgba(245,158,11,0.3); border-radius: 12px; padding: 0.75rem 1.25rem; margin-bottom: 1rem; cursor: pointer; transition: border-color 0.2s, transform 0.1s; }
+.review-banner:hover { border-color: var(--primary); transform: translateY(-1px); }
+.review-banner-left { font-size: 0.9rem; }
+.review-banner-right { font-size: 0.8rem; color: var(--primary); font-weight: 600; white-space: nowrap; }
+
+/* ── Review View ── */
+.review-view { max-width: 700px; margin: 0 auto; }
+.review-progress { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); }
+.review-progress-bar { flex: 1; height: 6px; background: var(--input-bg); border-radius: 3px; overflow: hidden; }
+.review-progress-fill { height: 100%; background: var(--primary); border-radius: 3px; transition: width 0.3s; }
+.review-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+.review-card-unit { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 0.75rem; }
+.review-card-question { font-size: 1rem; font-weight: 500; margin-bottom: 1rem; line-height: 1.5; }
+.review-actions { display: flex; gap: 0.75rem; margin-top: 1rem; }
+.review-actions button { flex: 1; }
+.review-done { text-align: center; padding: 3rem 1rem; }
+.review-done h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.review-correct-btn { background: rgba(34,197,94,0.15); border-color: #22c55e; color: #22c55e; }
+.review-correct-btn:hover { background: rgba(34,197,94,0.25); }
+.review-wrong-btn { background: rgba(239,68,68,0.15); border-color: #ef4444; color: #ef4444; }
+.review-wrong-btn:hover { background: rgba(239,68,68,0.25); }
+.disabled-screen { text-align: center; padding: 4rem 1rem; }
+.disabled-screen img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 16px rgba(0,0,0,0.3); border: 2px solid rgba(168,85,247,0.3); margin-bottom: 1rem; }
+.spinner { display: inline-block; width: 1.25rem; height: 1.25rem; border: 2px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+    .learning-page { padding: 1rem 0.75rem 3rem; }
+    .learning-header h1 { font-size: 1.3rem; }
+    .learning-header p { font-size: 0.75rem; }
+    .track-grid { grid-template-columns: 1fr; gap: 0.75rem; }
+    .learning-stats { gap: 1rem; font-size: 0.8rem; }
+    .track-detail-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    .track-detail-header .td-emoji { font-size: 2.5rem; }
+    .track-detail-header h2 { font-size: 1.25rem; }
+    .unit-main { padding: 0.5rem 0.75rem; gap: 0.5rem; }
+    .unit-actions { padding: 0 0.75rem 0.5rem 2.75rem; }
+    .unit-action-btn { font-size: 0.65rem; padding: 0.2rem 0.5rem; }
+    .unit-title { font-size: 0.8rem; }
+    .unit-tabs { gap: 0; }
+    .unit-tab { padding: 0.4rem 0.65rem; font-size: 0.75rem; }
+    .theory-content { font-size: 0.82rem; line-height: 1.7; }
+    .quiz-text { font-size: 0.82rem; }
+    .quiz-option { font-size: 0.8rem; padding: 0.4rem 0.6rem; }
+    .lesson-content { padding: 1rem; font-size: 0.82rem; }
+    .lesson-followup { flex-direction: column; }
+    .exam-panel { padding: 1rem; }
+    .exam-input-row { flex-direction: column; }
+    .exam-topic-row { flex-wrap: wrap; gap: 0.4rem; }
+    .exam-btn { font-size: 0.65rem; }
+    .level-dialog { padding: 1rem; }
+    .code-exercise textarea { min-height: 120px; font-size: 0.75rem; }
+    .open-textarea { min-height: 100px; font-size: 0.8rem; }
+    .open-meta { flex-direction: column; align-items: flex-start; }
+    .review-banner { flex-direction: column; gap: 0.4rem; text-align: center; padding: 0.6rem 1rem; }
+    .review-banner-left { font-size: 0.8rem; }
+    .review-card { padding: 1rem; }
+    .review-card-question { font-size: 0.9rem; }
+    .review-actions { flex-direction: column; }
+}
+@media (max-width: 380px) {
+    .track-card { padding: 1rem; }
+    .track-emoji { font-size: 1.5rem; }
+    .track-name { font-size: 0.9rem; }
+}
+</style>
+
+<main class="learning-page" id="learning-app">
+    <div style="text-align:center;padding:3rem"><div class="spinner"></div><p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem">Lade Lernmodus...</p></div>
+</main>
+
+<script>
+(function() {
+    const API = '/api.php';
+    const userId = <?= json_encode($userId) ?>;
+    const app = document.getElementById('learning-app');
+
+    const LEVEL_NAMES = ['🌱 Absoluter Anfänger','🌿 Anfänger','🌳 Fortgeschr. Anfänger','⚡ Fortgeschritten','🔥 Profi','💎 Experte'];
+
+    let state = {
+        view: 'dashboard', dashboard: null,
+        selectedTrack: null, trackDetail: null,
+        currentUnit: null, quizAnswers: [], quizResult: null,
+        lessonText: '', lessonLoading: false, lessonError: '',
+        codeText: '', codeResult: null,
+        activeTab: 'theory', levelDialog: null, levelValue: 0, error: '',
+        examTopics: [],
+        examDrill: null, examDrillTopic: '', examDrillLoading: false,
+        examSummary: '', examSummaryTopic: '', examSummaryLoading: false,
+        accessDenied: false,
+        // Review (Spaced Repetition)
+        reviewItems: [], reviewIdx: 0, reviewAnswer: null, reviewResult: null,
+        reviewStats: null, reviewLoading: false,
+    };
+
+    // ── API helpers (direct PHP — instant!) ──
+
+    async function api(action, data) {
+        try {
+            const r = await fetch(API + '?action=' + action, {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify(data || {})
+            });
+            const json = await r.json();
+            if (json.error === 'learning_disabled') {
+                state.accessDenied = true;
+                render();
+                return null;
+            }
+            return json;
+        } catch(e) {
+            console.error('API error:', action, e);
+            return null;
+        }
+    }
+
+    /** Send a learning command through portal poller (for LLM only) */
+    async function pollerCmd(cmd, maxWait) {
+        maxWait = maxWait || 45;
+        try {
+            const msg = '[LEARNING_CMD:' + cmd + ']';
+            const sendR = await api('send_message', {message: msg});
+            if (!sendR || sendR.error || !sendR.queue_id) return null;
+            if (sendR.status === 'away') return null;
+            for (let i = 0; i < maxWait; i++) {
+                await new Promise(r => setTimeout(r, 1000));
+                const checkR = await api('check_reply', {queue_id: sendR.queue_id});
+                if (checkR && (checkR.status === 'done' || checkR.reply)) {
+                    try { return JSON.parse(checkR.reply || '{}'); } catch(e) { return checkR.reply; }
+                }
+                if (checkR && checkR.status === 'failed') return null;
+            }
+        } catch(e) { console.error('pollerCmd error:', cmd, e); }
+        return null;
+    }
+
+    // ── Load dashboard (instant from PHP) ──
+
+    async function loadDashboard() {
+        state.error = '';
+        const [dash, examData] = await Promise.all([
+            api('learning_dashboard'),
+            api('learning_exam_topics')
+        ]);
+        if (!dash) return;
+        if (dash.success && dash.tracks) {
+            state.dashboard = dash;
+        } else {
+            state.error = dash.error || 'Dashboard konnte nicht geladen werden.';
+        }
+        if (examData && examData.success) state.examTopics = examData.topics || [];
+        render();
+    }
+
+    // ── Render ──
+
+    function render() {
+        if (state.accessDenied) { renderAccessDenied(); return; }
+        if (state.view === 'dashboard') renderDashboard();
+        else if (state.view === 'track') renderTrackDetail();
+        else if (state.view === 'unit') renderUnit();
+        else if (state.view === 'review') renderReview();
+    }
+
+    function renderAccessDenied() {
+        app.innerHTML = '<div class="disabled-screen">' +
+            '<img src="/assets/ailey-sad.jpg" alt="Ailey">' +
+            '<h2 style="font-size:1.3rem;font-weight:700;margin-bottom:0.5rem">Lernmodus nicht aktiviert</h2>' +
+            '<p style="color:var(--text-muted);font-size:0.85rem;max-width:400px;margin:0 auto">Der Lernmodus muss erst von einem Admin für dein Konto freigeschaltet werden.</p>' +
+            '<a href="/chat" class="btn btn-secondary" style="margin-top:1.5rem;display:inline-block">← Zurück zum Chat</a>' +
+            '</div>';
+    }
+
+    function renderDashboard() {
+        var tracks = state.dashboard ? state.dashboard.tracks : [];
+        var xp = state.dashboard ? (state.dashboard.xp || 0) : 0;
+        var streak = state.dashboard ? (state.dashboard.streak_days || 0) : 0;
+
+        var html = '<div class="learning-header">' +
+            '<h1>' + svgIcon() + ' A!ley Lernmodus</h1>' +
+            '<p>Interaktive Kurse • Quizzes • KI-gestützte Erklärungen</p>' +
+            '<div class="learning-stats">' +
+                '<div><div class="stat" style="color:var(--primary)">' + xp + ' XP</div><div class="stat-label">Erfahrung</div></div>' +
+                '<div><div class="stat">🔥 ' + streak + '</div><div class="stat-label">Tage Streak</div></div>' +
+            '</div></div>';
+
+        if (state.error) html += '<div class="error-bar">' + esc(state.error) + '</div>';
+
+        // Review Banner (Spaced Repetition)
+        var reviewDue = state.dashboard ? (state.dashboard.review_due || 0) : 0;
+        if (reviewDue > 0) {
+            html += '<div class="review-banner" onclick="LRN.startReview()">' +
+                '<div class="review-banner-left">🔄 <strong>' + reviewDue + ' Fragen</strong> zur Wiederholung fällig</div>' +
+                '<div class="review-banner-right">Jetzt wiederholen →</div></div>';
+        }
+
+        html += '<div class="track-grid">';
+        for (var i = 0; i < tracks.length; i++) {
+            var t = tracks[i];
+            html += '<div class="track-card" onclick="LRN.openTrack(\'' + t.id + '\')">' +
+                '<div class="track-card-head">' +
+                    '<div class="track-emoji">' + (t.icon || '📚') + '</div>' +
+                    '<button class="track-level-btn" onclick="event.stopPropagation();LRN.showLevelDialog(\'' + t.id + '\',' + (t.user_level||0) + ')">Level ' + (t.user_level||0) + '</button>' +
+                '</div>' +
+                '<div class="track-name">' + esc(t.name) + '</div>' +
+                '<div class="track-meta">' + (t.completed_units||0) + '/' + (t.total_units||'?') + ' Einheiten</div>' +
+                '<div class="progress-bar"><div class="progress-fill" style="width:' + (t.progress_pct||0) + '%"></div></div>' +
+                '<div class="progress-labels"><span>' + (t.progress_pct||0) + '%</span>' +
+                    (t.avg_quiz_score > 0 ? '<span>⌀ ' + t.avg_quiz_score + '%</span>' : '') +
+                '</div></div>';
+        }
+        html += '</div>';
+
+        html += renderExamPanel();
+
+        if (state.levelDialog) html += renderLevelDialog();
+
+        app.innerHTML = html;
+    }
+
+    function renderExamPanel() {
+        var html = '<div class="exam-panel">' +
+            '<h2 style="font-size:1.1rem;font-weight:700;margin:0 0 0.25rem 0">🎓 IHK Prüfungs-Fokus</h2>' +
+            '<p style="font-size:0.7rem;color:var(--text-muted);margin:0 0 1rem 0">Gib deine Prüfungsthemen ein — Drill & Zusammenfassung via Ailey (LLM)</p>' +
+            '<div class="exam-input-row">' +
+                '<input type="text" id="exam-topic-input" placeholder="Prüfungsthema eingeben..." onkeydown="if(event.key===\'Enter\')LRN.addExamTopic()">' +
+                '<button class="btn btn-secondary" onclick="LRN.addExamTopic()" style="white-space:nowrap">+ Hinzufügen</button>' +
+            '</div>';
+
+        if (state.examTopics.length > 0) {
+            for (var i = 0; i < state.examTopics.length; i++) {
+                var tp = state.examTopics[i];
+                var safe = esc(tp).replace(/'/g, "&#39;");
+                html += '<div class="exam-topic-row">' +
+                    '<span>' + esc(tp) + '</span>' +
+                    '<button class="exam-btn exam-btn-drill" onclick="LRN.examDrill(\'' + safe + '\')">📝 Drill</button>' +
+                    '<button class="exam-btn exam-btn-summary" onclick="LRN.examSummary(\'' + safe + '\')">📖 Zusammenfassung</button>' +
+                    '<button class="exam-btn-remove" onclick="LRN.removeExamTopic(' + i + ')">✕</button>' +
+                '</div>';
+            }
+        } else {
+            html += '<p style="font-size:0.75rem;color:var(--text-muted);font-style:italic">Noch keine Prüfungsthemen hinterlegt.</p>';
+        }
+
+        var suggestions = ['Typografie','Farbmanagement','PDF/X','Druckverfahren','Bildbearbeitung','Kalkulation','Medienrecht','Gestaltungsgrundlagen','Datenhandling','Webentwicklung'];
+        var filtered = suggestions.filter(s => state.examTopics.indexOf(s) === -1);
+        if (filtered.length > 0) {
+            html += '<div class="exam-suggestions">';
+            for (var si = 0; si < filtered.length; si++) {
+                html += '<button class="exam-suggestion-btn" onclick="LRN.addExamTopicDirect(\'' + filtered[si] + '\')">+ ' + filtered[si] + '</button>';
+            }
+            html += '</div>';
+        }
+
+        // Drill result
+        if (state.examDrillLoading || state.examDrill) {
+            html += '<div style="margin-top:1rem;border-top:1px solid var(--border,#333);padding-top:0.75rem">';
+            html += '<h3 style="font-size:0.9rem;font-weight:600;margin-bottom:0.5rem">📝 Übungsfragen: ' + esc(state.examDrillTopic) + '</h3>';
+            if (state.examDrillLoading) {
+                html += '<div style="text-align:center;padding:1rem"><div class="spinner"></div><p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem">Generiere Prüfungsfragen...</p></div>';
+            } else {
+                var content = typeof state.examDrill === 'string' ? state.examDrill : JSON.stringify(state.examDrill, null, 2);
+                html += '<div style="white-space:pre-wrap;font-size:0.85rem;line-height:1.6;background:rgba(0,0,0,0.2);border-radius:8px;padding:1rem;border:1px solid var(--border,#333)">' + esc(content) + '</div>';
+                html += '<button class="btn btn-secondary" onclick="LRN.examDrill(\'' + esc(state.examDrillTopic).replace(/'/g,"&#39;") + '\')" style="margin-top:0.5rem;font-size:0.75rem">🔄 Neue Fragen</button>';
+            }
+            html += '</div>';
+        }
+
+        // Summary result
+        if (state.examSummaryLoading || state.examSummary) {
+            html += '<div style="margin-top:1rem;border-top:1px solid var(--border,#333);padding-top:0.75rem">';
+            html += '<h3 style="font-size:0.9rem;font-weight:600;margin-bottom:0.5rem">📖 Zusammenfassung: ' + esc(state.examSummaryTopic) + '</h3>';
+            if (state.examSummaryLoading) {
+                html += '<div style="text-align:center;padding:1rem"><div class="spinner"></div><p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem">Erstelle Zusammenfassung...</p></div>';
+            } else {
+                html += '<div style="white-space:pre-wrap;font-size:0.85rem;line-height:1.6;background:rgba(0,0,0,0.2);border-radius:8px;padding:1rem;border:1px solid var(--border,#333)">' + esc(state.examSummary) + '</div>';
+                html += '<button class="btn btn-secondary" onclick="LRN.examSummary(\'' + esc(state.examSummaryTopic).replace(/'/g,"&#39;") + '\')" style="margin-top:0.5rem;font-size:0.75rem">🔄 Neu generieren</button>';
+            }
+            html += '</div>';
+        }
+
+        html += '</div>';
+        return html;
+    }
+
+    function renderLevelDialog() {
+        var html = '<div class="level-overlay" onclick="LRN.closeLevelDialog()">' +
+            '<div class="level-dialog" onclick="event.stopPropagation()">' +
+            '<h3 style="font-weight:600;margin-bottom:0.5rem">Einstiegslevel wählen</h3>' +
+            '<p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:1rem">Niedrigere Einheiten werden übersprungen.</p>';
+        for (var li = 0; li < LEVEL_NAMES.length; li++) {
+            html += '<button class="level-option ' + (state.levelValue === li ? 'active' : '') + '" onclick="LRN.setLevelValue(' + li + ')">' + LEVEL_NAMES[li] + '</button>';
+        }
+        html += '<div class="level-actions">' +
+            '<button class="btn btn-secondary" onclick="LRN.closeLevelDialog()">Abbrechen</button>' +
+            '<button class="btn btn-primary" onclick="LRN.confirmLevel()">Speichern</button>' +
+            '</div></div></div>';
+        return html;
+    }
+
+    function renderTrackDetail() {
+        var td = state.trackDetail;
+        if (!td) {
+            app.innerHTML = '<div style="text-align:center;padding:3rem"><div class="spinner"></div><p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem">Lade Track...</p></div>';
+            return;
+        }
+
+        var html = '<div class="track-detail">' +
+            '<button class="back-btn" onclick="LRN.goBack()">← Zurück</button>' +
+            '<div class="track-detail-header">' +
+                '<div class="td-emoji">' + (td.icon || '📚') + '</div>' +
+                '<div><h2>' + esc(td.name) + '</h2>' +
+                '<p>' + esc(td.description || '') + '</p></div>' +
+            '</div><div class="unit-list">';
+
+        var units = td.units || [];
+        for (var ui = 0; ui < units.length; ui++) {
+            var u = units[ui];
+            var bestHtml = u.best_score !== null && u.best_score !== undefined ? '<span class="unit-best-score">⌀ ' + Math.round(u.best_score) + '%</span>' : '';
+            html += '<div class="unit-item">' +
+                '<div class="unit-main" onclick="LRN.openUnit(\'' + state.selectedTrack + '\',\'' + u.id + '\')">' +
+                    (u.is_completed
+                        ? '<div class="unit-num unit-check">✓</div>'
+                        : '<div class="unit-num">' + (ui+1) + '</div>') +
+                    '<div class="unit-info">' +
+                        '<div class="unit-title">' + esc(u.title) + '</div>' +
+                        '<div class="unit-meta">' +
+                            '<span>' + (LEVEL_NAMES[u.level] || 'Level '+u.level) + '</span>' +
+                            (u.quiz_count ? '<span>📝 '+u.quiz_count+' Fragen</span>' : '') +
+                            (u.has_exercise ? '<span>💻 Übung</span>' : '') +
+                            bestHtml +
+                        '</div>' +
+                    '</div>' +
+                    '<span style="color:var(--text-muted)">›</span>' +
+                '</div>' +
+                '<div class="unit-actions">' +
+                    (u.quiz_count ? '<button class="unit-action-btn quiz-btn" onclick="event.stopPropagation();LRN.openUnit(\'' + state.selectedTrack + '\',\'' + u.id + '\',\'quiz\')">📝 Quiz</button>' : '') +
+                    '<button class="unit-action-btn ask-btn" onclick="event.stopPropagation();LRN.openUnit(\'' + state.selectedTrack + '\',\'' + u.id + '\',\'lesson\')">💜 Frag Ailey</button>' +
+                '</div></div>';
+        }
+
+        html += '</div></div>';
+        if (state.levelDialog) html += renderLevelDialog();
+        app.innerHTML = html;
+    }
+
+    function renderUnit() {
+        var u = state.currentUnit;
+        if (!u) {
+            app.innerHTML = '<div style="text-align:center;padding:3rem"><div class="spinner"></div><p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem">Lade Lektion...</p></div>';
+            return;
+        }
+
+        var tabs = [{key:'theory', label:'📖 Theorie'}];
+        if (u.quiz && u.quiz.length) tabs.push({key:'quiz', label:'📝 Quiz ('+u.quiz.length+')'});
+        tabs.push({key:'lesson', label:'💜 Ailey erklärt'});
+
+        var html = '<div class="unit-view">' +
+            '<button class="back-btn" onclick="LRN.goBackToTrack()">← Zurück</button>' +
+            '<div style="margin-bottom:0.5rem">' +
+                '<div style="font-size:0.75rem;color:var(--text-muted)">' + esc(u.level_emoji || '') + ' ' + esc(u.level_name || '') + ' • ' + (u.xp_reward || 0) + ' XP ' + (u.is_completed ? '<span style="color:#22c55e;font-weight:600">✓ Abgeschlossen</span>' : '') + '</div>' +
+                '<h2 style="font-size:1.5rem;font-weight:700;margin-top:0.25rem">' + esc(u.title) + '</h2>' +
+            '</div><div class="unit-tabs">';
+
+        for (var ti = 0; ti < tabs.length; ti++) {
+            html += '<button class="unit-tab ' + (state.activeTab === tabs[ti].key ? 'active' : '') + '" onclick="LRN.setTab(\'' + tabs[ti].key + '\')">' + tabs[ti].label + '</button>';
+        }
+        html += '</div>';
+
+        if (state.activeTab === 'theory') html += renderTheoryTab(u);
+        else if (state.activeTab === 'quiz') html += renderQuizTab(u);
+        else if (state.activeTab === 'lesson') html += renderLessonTab(u);
+
+        html += '</div>';
+        app.innerHTML = html;
+    }
+
+    function renderTheoryTab(u) {
+        var html = '<div class="theory-content">' + esc(u.theory || '') + '</div>';
+        if (u.examples && u.examples.length) {
+            html += '<h3 style="font-size:1.1rem;font-weight:600;margin:1.5rem 0 0.75rem">💡 Beispiele</h3>';
+            for (var i = 0; i < u.examples.length; i++) {
+                var ex = u.examples[i];
+                html += '<div class="example-block"><div class="example-label">' + esc(ex.label || ex.title || '') + '</div><pre class="example-code">' + esc(ex.code || '') + '</pre></div>';
+            }
+        }
+        if (u.exercise) {
+            html += '<div style="border-top:1px solid var(--border);padding-top:1.5rem;margin-top:1.5rem" class="code-exercise">' +
+                '<h3 style="font-size:1.1rem;font-weight:600;margin-bottom:0.5rem">💻 Coding-Übung</h3>' +
+                '<p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.75rem">' + esc(u.exercise.task || '') + '</p>' +
+                '<textarea id="code-input" placeholder="' + esc(u.exercise.starter || 'Dein Code hier...') + '">' + esc(state.codeText) + '</textarea>' +
+                '<button class="btn btn-primary" style="margin-top:0.75rem" onclick="LRN.submitCode()">🚀 Code prüfen (via Ailey)</button>';
+            if (state.codeResult) html += renderCodeResult();
+            html += '</div>';
+        }
+        return html;
+    }
+
+    function renderCodeResult() {
+        var r = state.codeResult;
+        var html = '<div class="code-result ' + (r.passed ? 'passed' : 'failed') + '">' +
+            '<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">' +
+                '<span style="font-size:1.25rem">' + (r.passed ? '✅' : '⚠️') + '</span>' +
+                '<span style="font-weight:600">' + (r.score || 0) + '/100 Punkte</span>' +
+            '</div>' +
+            '<p style="font-size:0.85rem">' + esc(r.feedback || '') + '</p>';
+        if (r.improvements && r.improvements.length) {
+            html += '<ul style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem">';
+            for (var i = 0; i < r.improvements.length; i++) html += '<li>• ' + esc(r.improvements[i]) + '</li>';
+            html += '</ul>';
+        }
+        html += '</div>';
+        return html;
+    }
+
+    function renderQuizTab(u) {
+        var quiz = u.quiz || [];
+        var html = '';
+        for (var qi = 0; qi < quiz.length; qi++) {
+            var q = quiz[qi];
+            var result = state.quizResult && state.quizResult.results ? state.quizResult.results[qi] : null;
+            var cls = result ? (result.correct ? 'correct' : 'incorrect') : '';
+            html += '<div class="quiz-question ' + cls + '">';
+            var typeLabel = {mc:'Multiple Choice',tf:'Wahr/Falsch',fill:'Lückentext',match:'Zuordnung',open:'Freie Antwort',code:'Code'}[q.type] || q.type;
+            html += '<div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap"><span class="quiz-type-badge">' + typeLabel + '</span><span style="font-size:0.7rem;color:var(--text-muted)">Frage ' + (qi+1) + '</span></div>';
+            html += '<div class="quiz-text">' + esc(q.question) + '</div>';
+
+            if (q.type === 'mc' && q.options) {
+                html += '<div class="quiz-options">';
+                for (var oi = 0; oi < q.options.length; oi++) {
+                    var sel = state.quizAnswers[qi] === oi;
+                    var optCls = sel ? 'selected' : '';
+                    if (result && sel) optCls += result.correct ? ' correct-answer' : ' wrong-answer';
+                    html += '<button class="quiz-option ' + optCls + '" ' + (state.quizResult ? 'disabled' : '') + ' onclick="LRN.setAnswer(' + qi + ',' + oi + ')">' + esc(q.options[oi]) + '</button>';
+                }
+                html += '</div>';
+            } else if (q.type === 'tf') {
+                html += '<div class="tf-row">';
+                var trueSelected = state.quizAnswers[qi] === true;
+                var falseSelected = state.quizAnswers[qi] === false;
+                var trueCls = trueSelected ? 'selected' : '';
+                var falseCls = falseSelected ? 'selected' : '';
+                if (result && trueSelected) trueCls += result.correct ? ' correct-answer' : ' wrong-answer';
+                if (result && falseSelected) falseCls += result.correct ? ' correct-answer' : ' wrong-answer';
+                html += '<button class="quiz-option ' + trueCls + '" ' + (state.quizResult ? 'disabled' : '') + ' onclick="LRN.setAnswer(' + qi + ',true)">✓ Wahr</button>';
+                html += '<button class="quiz-option ' + falseCls + '" ' + (state.quizResult ? 'disabled' : '') + ' onclick="LRN.setAnswer(' + qi + ',false)">✗ Falsch</button>';
+                html += '</div>';
+            } else if (q.type === 'fill') {
+                html += '<input type="text" class="fill-input" placeholder="Deine Antwort..." value="' + esc(state.quizAnswers[qi] || '') + '" ' + (state.quizResult ? 'disabled' : '') + ' oninput="LRN.setAnswer(' + qi + ',this.value)">';
+            } else if (q.type === 'match' && q.left && q.right) {
+                html += '<div class="match-grid">';
+                for (var mi = 0; mi < q.left.length; mi++) {
+                    html += '<div class="match-row"><div class="match-left">' + esc(q.left[mi]) + '</div>';
+                    html += '<select class="match-select" ' + (state.quizResult ? 'disabled' : '') + ' onchange="LRN.setMatchAnswer(' + qi + ',' + mi + ',this.value)">';
+                    html += '<option value="">— wählen —</option>';
+                    for (var ri = 0; ri < q.right.length; ri++) {
+                        var selected = state.quizAnswers[qi] && state.quizAnswers[qi][mi] === q.right[ri] ? ' selected' : '';
+                        html += '<option value="' + esc(q.right[ri]) + '"' + selected + '>' + esc(q.right[ri]) + '</option>';
+                    }
+                    html += '</select></div>';
+                }
+                html += '</div>';
+            } else if (q.type === 'open') {
+                var curVal = state.quizAnswers[qi] || '';
+                var wordCount = curVal.trim() ? curVal.trim().split(/\s+/).length : 0;
+                var minWords = q.min_words || 10;
+                html += '<div class="open-answer-wrapper">' +
+                    '<textarea class="open-textarea" placeholder="Schreibe deine Antwort hier ausführlich..." ' +
+                    (state.quizResult ? 'disabled' : '') +
+                    ' oninput="LRN.setAnswer(' + qi + ',this.value);LRN.updateWordCount(this,' + minWords + ')"' +
+                    ' rows="5">' + esc(curVal) + '</textarea>' +
+                    '<div class="open-meta">' +
+                        '<span class="open-word-count' + (wordCount < minWords ? ' low' : ' ok') + '">' + wordCount + ' / min. ' + minWords + ' Wörter</span>' +
+                        '<span class="open-hint">💡 Bewertet nach Schlüsselbegriffen</span>' +
+                    '</div></div>';
+            }
+
+            if (result) {
+                var feedbackExtra = '';
+                if (result.type === 'open' && result.correct) feedbackExtra = ' Gute Antwort — Schlüsselbegriffe erkannt!';
+                if (result.type === 'open' && !result.correct) feedbackExtra = ' Versuche mehr Fachbegriffe einzubauen und ausführlicher zu antworten.';
+                html += '<div class="quiz-feedback ' + (result.correct ? 'correct' : 'incorrect') + '">' + (result.correct ? '✅ Richtig!' : '❌ Falsch') + (result.explanation ? ' — ' + esc(result.explanation) : '') + feedbackExtra + '</div>';
+            }
+            html += '</div>';
+        }
+
+        if (!state.quizResult) {
+            var anyAnswered = state.quizAnswers.some(a => a !== null && a !== undefined && a !== '');
+            html += '<button class="btn btn-primary quiz-submit-btn" ' + (!anyAnswered ? 'disabled' : '') + ' onclick="LRN.submitQuiz()">📝 Quiz abgeben</button>';
+        } else {
+            var r = state.quizResult;
+            html += '<div class="quiz-result ' + (r.passed ? 'passed' : 'failed') + '">' +
+                '<div class="big-emoji">' + (r.passed ? '🎉' : '📚') + '</div>' +
+                '<div class="score">' + r.score + '%</div>' +
+                '<div style="font-size:0.85rem;color:var(--text-muted)">' + r.correct + '/' + r.total + ' richtig</div>' +
+                (r.xp_earned > 0 ? '<div style="color:var(--primary);font-family:monospace;margin-top:0.25rem">+' + r.xp_earned + ' XP</div>' : '') +
+                (!r.passed ? '<p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem">60% benötigt. Versuch es nochmal!</p>' : '') +
+                '<button class="btn btn-secondary" style="margin-top:0.75rem" onclick="LRN.retryQuiz()">🔄 Nochmal</button></div>';
+        }
+        return html;
+    }
+
+    function renderLessonTab(u) {
+        if (state.lessonError) {
+            return '<div class="lesson-cta">' +
+                '<img src="/assets/ailey-sad.jpg" alt="Ailey" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin:0 auto 0.5rem;display:block;box-shadow:0 4px 12px rgba(0,0,0,0.3);border:2px solid rgba(168,85,247,0.3)">' +
+                '<p style="color:#f87171;font-size:0.9rem;margin-bottom:1rem">' + esc(state.lessonError) + '</p>' +
+                '<button class="btn btn-primary" onclick="LRN.requestLesson()">🔄 Nochmal versuchen</button></div>';
+        }
+        if (!state.lessonText && !state.lessonLoading) {
+            return '<div class="lesson-cta"><img src="/assets/ailey-thinking.jpg" alt="Ailey" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin:0 auto 0.5rem;display:block;box-shadow:0 4px 12px rgba(0,0,0,0.3);border:2px solid rgba(168,85,247,0.3)">' +
+                '<p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:1rem">Lass dir das Thema von Ailey persönlich erklären!</p>' +
+                '<button class="btn btn-primary" onclick="LRN.requestLesson()">Ailey, erklär mir das!</button></div>';
+        }
+        if (state.lessonLoading) {
+            return '<div style="text-align:center;padding:3rem"><div class="spinner"></div><p style="margin-top:0.5rem;font-size:0.85rem;color:var(--text-muted)">Ailey denkt nach...</p></div>';
+        }
+        return '<div class="lesson-content">' + esc(state.lessonText) + '</div>' +
+            '<div class="lesson-followup">' +
+                '<input type="text" id="lesson-q" placeholder="Nachfrage stellen..." onkeydown="if(event.key===\'Enter\')LRN.askFollowUp()">' +
+                '<button class="btn btn-primary" onclick="LRN.askFollowUp()">↗</button></div>';
+    }
+
+    function renderReview() {
+        if (state.reviewLoading) {
+            app.innerHTML = '<div style="text-align:center;padding:3rem"><div class="spinner"></div><p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem">Lade Wiederholungsfragen...</p></div>';
+            return;
+        }
+        var items = state.reviewItems;
+        var idx = state.reviewIdx;
+        var html = '<div class="review-view">' +
+            '<button class="back-btn" onclick="LRN.goBack()">← Zurück zum Dashboard</button>' +
+            '<h2 style="font-size:1.3rem;font-weight:700;margin-bottom:0.25rem">🔄 Wiederholung (Spaced Repetition)</h2>' +
+            '<p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1rem">Fragen, die du falsch beantwortet hast, werden in steigenden Abständen wiederholt.</p>';
+
+        if (items.length === 0) {
+            html += '<div class="review-done">' +
+                '<div style="font-size:3rem;margin-bottom:0.5rem">🎉</div>' +
+                '<h2>Alles erledigt!</h2>' +
+                '<p style="color:var(--text-muted);font-size:0.9rem">Keine Fragen zur Wiederholung fällig. Weiter so!</p>' +
+                '<button class="btn btn-primary" style="margin-top:1rem" onclick="LRN.goBack()">Zurück</button></div>';
+        } else if (idx >= items.length) {
+            html += '<div class="review-done">' +
+                '<div style="font-size:3rem;margin-bottom:0.5rem">✅</div>' +
+                '<h2>Session beendet!</h2>' +
+                '<p style="color:var(--text-muted);font-size:0.9rem">' + items.length + ' Fragen wiederholt.</p>' +
+                '<button class="btn btn-primary" style="margin-top:1rem" onclick="LRN.goBack()">Zurück</button></div>';
+        } else {
+            var item = items[idx];
+            var q = item.question;
+            html += '<div class="review-progress">' +
+                '<span>' + (idx+1) + '/' + items.length + '</span>' +
+                '<div class="review-progress-bar"><div class="review-progress-fill" style="width:' + Math.round((idx/items.length)*100) + '%"></div></div>' +
+                '<span style="font-size:0.7rem">' + esc(item.unit_title || '') + '</span></div>';
+
+            html += '<div class="review-card">' +
+                '<div class="review-card-unit">📚 ' + esc(item.track_id) + ' → ' + esc(item.unit_title || item.unit_id) + ' (Wdh. ' + (item.repetitions||0) + ')</div>';
+
+            if (q) {
+                html += '<div class="review-card-question">' + esc(q.question) + '</div>';
+                // Render answer input based on type
+                if (q.type === 'mc' && q.options) {
+                    html += '<div class="quiz-options">';
+                    for (var oi = 0; oi < q.options.length; oi++) {
+                        var selCls = state.reviewAnswer === oi ? 'selected' : '';
+                        html += '<button class="quiz-option ' + selCls + '" onclick="LRN.setReviewAnswer(' + oi + ')" ' + (state.reviewResult !== null ? 'disabled' : '') + '>' + esc(q.options[oi]) + '</button>';
+                    }
+                    html += '</div>';
+                } else if (q.type === 'tf') {
+                    html += '<div class="tf-row">';
+                    html += '<button class="quiz-option ' + (state.reviewAnswer === true ? 'selected' : '') + '" onclick="LRN.setReviewAnswer(true)" ' + (state.reviewResult !== null ? 'disabled' : '') + '>✓ Wahr</button>';
+                    html += '<button class="quiz-option ' + (state.reviewAnswer === false ? 'selected' : '') + '" onclick="LRN.setReviewAnswer(false)" ' + (state.reviewResult !== null ? 'disabled' : '') + '>✗ Falsch</button>';
+                    html += '</div>';
+                } else if (q.type === 'open') {
+                    html += '<textarea class="open-textarea" placeholder="Deine Antwort..." oninput="LRN.setReviewAnswer(this.value)" ' + (state.reviewResult !== null ? 'disabled' : '') + ' rows="4">' + esc(state.reviewAnswer || '') + '</textarea>';
+                } else {
+                    html += '<input type="text" class="fill-input" placeholder="Deine Antwort..." oninput="LRN.setReviewAnswer(this.value)" ' + (state.reviewResult !== null ? 'disabled' : '') + ' value="' + esc(state.reviewAnswer || '') + '">';
+                }
+            } else {
+                html += '<div class="review-card-question">' + esc(item.question_text || 'Frage nicht mehr verfügbar') + '</div>';
+            }
+
+            // Action buttons
+            if (state.reviewResult === null) {
+                html += '<div class="review-actions">' +
+                    '<button class="btn review-wrong-btn" onclick="LRN.reviewMark(false)">❌ Wusste ich nicht</button>' +
+                    '<button class="btn review-correct-btn" onclick="LRN.reviewMark(true)" ' + (state.reviewAnswer === null ? 'disabled' : '') + '>✅ Richtig</button></div>';
+            } else {
+                html += '<div class="quiz-feedback ' + (state.reviewResult ? 'correct' : 'incorrect') + '" style="margin-top:0.75rem">' +
+                    (state.reviewResult ? '✅ Gut gemacht! Nächste Wiederholung in längerem Abstand.' : '❌ Wird morgen erneut abgefragt.') + '</div>' +
+                    '<button class="btn btn-primary" style="margin-top:0.75rem;width:100%" onclick="LRN.reviewNext()">Weiter →</button>';
+            }
+            html += '</div>'; // card
+        }
+        html += '</div>'; // review-view
+        app.innerHTML = html;
+    }
+
+    function svgIcon() {
+        return '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>';
+    }
+
+    function esc(s) {
+        if (s === null || s === undefined) return '';
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ── Actions ──
+
+    window.LRN = {
+        openTrack: async function(trackId) {
+            state.selectedTrack = trackId;
+            state.view = 'track';
+            state.trackDetail = null;
+            render();
+            var data = await api('learning_track', {track_id: trackId});
+            if (data && data.success && data.track) state.trackDetail = data.track;
+            render();
+        },
+
+        openUnit: async function(trackId, unitId, startTab) {
+            state.view = 'unit';
+            state.activeTab = startTab || 'theory';
+            state.quizResult = null;
+            state.lessonText = '';
+            state.lessonError = '';
+            state.codeText = '';
+            state.codeResult = null;
+            state.currentUnit = null;
+            render();
+            var data = await api('learning_unit', {track_id: trackId, unit_id: unitId});
+            if (data && data.success && data.unit) {
+                state.currentUnit = data.unit;
+                state.quizAnswers = new Array(data.unit.quiz ? data.unit.quiz.length : 0).fill(null);
+            }
+            render();
+            if (startTab === 'lesson' && state.currentUnit) {
+                LRN.requestLesson();
+            }
+        },
+
+        goBack: function() {
+            state.view = 'dashboard';
+            state.selectedTrack = null;
+            state.trackDetail = null;
+            loadDashboard();
+        },
+
+        goBackToTrack: function() {
+            state.view = 'track';
+            state.currentUnit = null;
+            LRN.openTrack(state.selectedTrack);
+        },
+
+        setTab: function(tab) { state.activeTab = tab; render(); },
+        setAnswer: function(qi, val) { state.quizAnswers[qi] = val; render(); },
+        setMatchAnswer: function(qi, mi, val) {
+            if (!state.quizAnswers[qi]) state.quizAnswers[qi] = [];
+            state.quizAnswers[qi][mi] = val;
+            render();
+        },
+
+        submitQuiz: async function() {
+            if (!state.currentUnit) return;
+            var data = await api('learning_quiz_evaluate', {
+                track_id: state.selectedTrack,
+                unit_id: state.currentUnit.id,
+                answers: state.quizAnswers
+            });
+            if (data && data.success) state.quizResult = data;
+            render();
+        },
+
+        retryQuiz: function() {
+            state.quizResult = null;
+            state.quizAnswers = new Array(state.currentUnit && state.currentUnit.quiz ? state.currentUnit.quiz.length : 0).fill(null);
+            render();
+        },
+
+        requestLesson: async function(question) {
+            state.lessonLoading = true;
+            state.lessonError = '';
+            render();
+            var cmd = question
+                ? 'lesson:' + state.selectedTrack + ':' + state.currentUnit.id + ':' + question
+                : 'lesson:' + state.selectedTrack + ':' + state.currentUnit.id;
+            var data = await pollerCmd(cmd, 60);
+            if (data && data.error) {
+                state.lessonError = data.message || data.error;
+                state.lessonText = '';
+            } else if (data && data.lesson) {
+                state.lessonText = data.lesson;
+                state.lessonError = '';
+            } else if (typeof data === 'string' && data.length > 0) {
+                state.lessonText = data;
+                state.lessonError = '';
+            } else {
+                state.lessonError = 'Ailey ist gerade nicht erreichbar — probier es in 1-2 Minuten nochmal! 💜';
+                state.lessonText = '';
+            }
+            state.lessonLoading = false;
+            render();
+        },
+
+        askFollowUp: function() {
+            var input = document.getElementById('lesson-q');
+            if (input && input.value.trim()) LRN.requestLesson(input.value.trim());
+        },
+
+        submitCode: async function() {
+            var ta = document.getElementById('code-input');
+            if (!ta) return;
+            state.codeText = ta.value;
+            var data = await pollerCmd('code_evaluate:' + state.selectedTrack + ':' + state.currentUnit.id + ':' + state.codeText, 45);
+            state.codeResult = data || {score:0, passed:false, feedback:'Bewertung fehlgeschlagen'};
+            render();
+        },
+
+        showLevelDialog: function(trackId, lvl) { state.levelDialog = trackId; state.levelValue = lvl; render(); },
+        closeLevelDialog: function() { state.levelDialog = null; render(); },
+        setLevelValue: function(v) { state.levelValue = v; render(); },
+
+        confirmLevel: async function() {
+            if (!state.levelDialog) return;
+            await api('learning_set_level', {track_id: state.levelDialog, level: state.levelValue});
+            state.levelDialog = null;
+            await loadDashboard();
+        },
+
+        // IHK Exam topics (saved via PHP/MySQL — instant)
+        addExamTopic: function() {
+            var input = document.getElementById('exam-topic-input');
+            var topic = input ? input.value.trim() : '';
+            if (!topic) return;
+            LRN.addExamTopicDirect(topic);
+            if (input) input.value = '';
+        },
+
+        addExamTopicDirect: async function(topic) {
+            if (!topic || state.examTopics.indexOf(topic) !== -1) return;
+            state.examTopics.push(topic);
+            render();
+            await api('learning_exam_topics', {topics: state.examTopics});
+        },
+
+        removeExamTopic: async function(idx) {
+            state.examTopics.splice(idx, 1);
+            render();
+            await api('learning_exam_topics', {topics: state.examTopics});
+        },
+
+        updateWordCount: function(textarea, minWords) {
+            var wrapper = textarea.closest('.open-answer-wrapper');
+            if (!wrapper) return;
+            var counter = wrapper.querySelector('.open-word-count');
+            if (!counter) return;
+            var words = textarea.value.trim() ? textarea.value.trim().split(/\s+/).length : 0;
+            counter.textContent = words + ' / min. ' + minWords + ' Wörter';
+            counter.className = 'open-word-count ' + (words < minWords ? 'low' : 'ok');
+        },
+
+        // ── Spaced Repetition Review ──
+        startReview: async function() {
+            state.view = 'review';
+            state.reviewItems = [];
+            state.reviewIdx = 0;
+            state.reviewAnswer = null;
+            state.reviewResult = null;
+            state.reviewLoading = true;
+            render();
+            var data = await api('learning_review', {limit: 20});
+            if (data && data.success) {
+                state.reviewItems = data.items || [];
+                state.reviewStats = data.stats || null;
+            }
+            state.reviewLoading = false;
+            render();
+        },
+
+        setReviewAnswer: function(val) {
+            state.reviewAnswer = val;
+            render();
+        },
+
+        reviewMark: async function(correct) {
+            var item = state.reviewItems[state.reviewIdx];
+            if (!item) return;
+            state.reviewResult = correct;
+            render();
+            await api('learning_review_answer', {
+                track_id: item.track_id,
+                unit_id: item.unit_id,
+                question_idx: item.question_idx,
+                correct: correct,
+            });
+        },
+
+        reviewNext: function() {
+            state.reviewIdx++;
+            state.reviewAnswer = null;
+            state.reviewResult = null;
+            render();
+        },
+
+        // LLM-powered exam features (via poller — needs Ailey running)
+        examDrill: async function(topic) {
+            state.examDrillLoading = true;
+            state.examDrill = null;
+            state.examDrillTopic = topic;
+            render();
+            var data = await pollerCmd('exam_drill:' + topic + ':5', 60);
+            state.examDrill = data && data.questions ? data.questions : (data || 'Keine Fragen generiert');
+            state.examDrillLoading = false;
+            render();
+        },
+
+        examSummary: async function(topic) {
+            state.examSummaryLoading = true;
+            state.examSummary = '';
+            state.examSummaryTopic = topic;
+            render();
+            var data = await pollerCmd('exam_summary:' + topic, 60);
+            state.examSummary = data && data.summary ? data.summary : (typeof data === 'string' ? data : 'Keine Zusammenfassung generiert');
+            state.examSummaryLoading = false;
+            render();
+        },
+    };
+
+    // Init
+    loadDashboard();
+})();
+</script>
+
+<?php portal_footer(); ?>

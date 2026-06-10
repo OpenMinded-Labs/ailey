@@ -1,0 +1,624 @@
+/* ============================================================
+   🎭 AILEY THEME — Dynamic mood-based color scheme
+   Separate file to prevent Tailwind v4 tree-shaking
+   Colors shift smoothly based on Ailey's current mood
+   ============================================================ */
+
+/* ── Smooth transitions for mood changes ── */
+.ailey-mood,
+.ailey-mood * {
+  transition:
+    background-color 2s ease-in-out,
+    border-color 2s ease-in-out,
+    color 1.5s ease-in-out,
+    box-shadow 2s ease-in-out;
+}
+
+/* ── Keyframes for Ailey theme ── */
+@keyframes ailey-breathe {
+  0%, 100% { opacity: 0.8; }
+  50%      { opacity: 1; }
+}
+
+@keyframes ailey-mood-glow {
+  0%, 100% { box-shadow: 0 0 20px var(--ailey-glow, rgba(190,18,60,0.15)); }
+  50%      { box-shadow: 0 0 35px var(--ailey-glow, rgba(190,18,60,0.25)); }
+}
+
+@keyframes ailey-aurora {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🎭 BASE — CSS Variables (default: happy)
+   Each mood overrides these via data-ailey-mood attribute
+   ═══════════════════════════════════════════════════════════════ */
+
+.ailey-mood,
+.dark.ailey-mood {
+  /* Ailey theme defaults — warm, happy vibe */
+  --background: #0a0c08;
+  --foreground: #f0eee8;
+  --card: #14160f;
+  --card-foreground: #f0eee8;
+  --popover: #14160f;
+  --popover-foreground: #f0eee8;
+  --primary: #be123c;
+  --primary-foreground: #ffffff;
+  --secondary: #0891b2;
+  --secondary-foreground: #ffffff;
+  --muted: #1c1e18;
+  --muted-foreground: #a8a698;
+  --accent: #0891b2;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #2a2c24;
+  --input: #1c1e18;
+  --ring: rgba(190, 18, 60, 0.4);
+  --sidebar: #0e100a;
+  --sidebar-foreground: #f0eee8;
+  --sidebar-primary: #be123c;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #0891b2;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #2a2c24;
+  --sidebar-ring: rgba(190, 18, 60, 0.4);
+
+  /* Ailey-specific mood accent vars */
+  --ailey-glow: rgba(190, 18, 60, 0.15);
+  --ailey-gradient-a: #be123c;
+  --ailey-gradient-b: #0891b2;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🎭 MOOD OVERRIDES — data-ailey-mood="xxx"
+   Applied to <html> via JS when Ailey theme is active
+   ═══════════════════════════════════════════════════════════════ */
+
+/* 😊 Happy — warm green/emerald tones */
+[data-ailey-mood="happy"].ailey-mood,
+.dark[data-ailey-mood="happy"].ailey-mood {
+  --background: #080c08;
+  --card: #101810;
+  --primary: #22c55e;
+  --primary-foreground: #052e16;
+  --secondary: #86efac;
+  --accent: #4ade80;
+  --border: #1a3a1a;
+  --input: #142014;
+  --ring: rgba(34, 197, 94, 0.4);
+  --muted: #142014;
+  --muted-foreground: #86efac;
+  --sidebar-primary: #22c55e;
+  --sidebar-accent: #4ade80;
+  --sidebar-border: #1a3a1a;
+  --ailey-glow: rgba(34, 197, 94, 0.15);
+  --ailey-gradient-a: #22c55e;
+  --ailey-gradient-b: #06b6d4;
+}
+
+/* 🤩 Excited — vibrant pink/fuchsia energy */
+[data-ailey-mood="excited"].ailey-mood,
+.dark[data-ailey-mood="excited"].ailey-mood {
+  --background: #0c080c;
+  --card: #1c0e1c;
+  --primary: #ec4899;
+  --primary-foreground: #ffffff;
+  --secondary: #f0abfc;
+  --accent: #d946ef;
+  --border: #3a1a3a;
+  --input: #1e121e;
+  --ring: rgba(236, 72, 153, 0.5);
+  --muted: #1e121e;
+  --muted-foreground: #f0abfc;
+  --sidebar-primary: #ec4899;
+  --sidebar-accent: #d946ef;
+  --sidebar-border: #3a1a3a;
+  --ailey-glow: rgba(236, 72, 153, 0.2);
+  --ailey-gradient-a: #ec4899;
+  --ailey-gradient-b: #d946ef;
+}
+
+/* 🎲 Playful — warm amber/pink blend */
+[data-ailey-mood="playful"].ailey-mood,
+.dark[data-ailey-mood="playful"].ailey-mood {
+  --background: #0c0a06;
+  --card: #1c1610;
+  --primary: #f59e0b;
+  --primary-foreground: #451a03;
+  --secondary: #fb923c;
+  --accent: #ec4899;
+  --border: #3a2e14;
+  --input: #201a10;
+  --ring: rgba(245, 158, 11, 0.4);
+  --muted: #201a10;
+  --muted-foreground: #fcd34d;
+  --sidebar-primary: #f59e0b;
+  --sidebar-accent: #ec4899;
+  --sidebar-border: #3a2e14;
+  --ailey-glow: rgba(245, 158, 11, 0.15);
+  --ailey-gradient-a: #f59e0b;
+  --ailey-gradient-b: #ec4899;
+}
+
+/* 🤔 Thinking — cool indigo/slate focus */
+[data-ailey-mood="thinking"].ailey-mood,
+.dark[data-ailey-mood="thinking"].ailey-mood {
+  --background: #08080e;
+  --card: #101018;
+  --primary: #6366f1;
+  --primary-foreground: #ffffff;
+  --secondary: #818cf8;
+  --accent: #a5b4fc;
+  --border: #1e1e3a;
+  --input: #14142a;
+  --ring: rgba(99, 102, 241, 0.4);
+  --muted: #14142a;
+  --muted-foreground: #a5b4fc;
+  --sidebar-primary: #6366f1;
+  --sidebar-accent: #818cf8;
+  --sidebar-border: #1e1e3a;
+  --ailey-glow: rgba(99, 102, 241, 0.15);
+  --ailey-gradient-a: #6366f1;
+  --ailey-gradient-b: #94a3b8;
+}
+
+/* 😐 Neutral — balanced warm gray */
+[data-ailey-mood="neutral"].ailey-mood,
+.dark[data-ailey-mood="neutral"].ailey-mood {
+  --background: #0a0a0a;
+  --card: #171717;
+  --primary: #be123c;
+  --primary-foreground: #ffffff;
+  --secondary: #0891b2;
+  --accent: #0891b2;
+  --border: #be123c;
+  --input: #333333;
+  --ring: rgba(190, 18, 60, 0.5);
+  --muted: #333333;
+  --muted-foreground: #a3a3a3;
+  --sidebar-primary: #be123c;
+  --sidebar-accent: #0891b2;
+  --sidebar-border: #be123c;
+  --ailey-glow: rgba(190, 18, 60, 0.12);
+  --ailey-gradient-a: #be123c;
+  --ailey-gradient-b: #0891b2;
+}
+
+/* 😢 Sad — deep blue/sky tones, melancholic */
+[data-ailey-mood="sad"].ailey-mood,
+.dark[data-ailey-mood="sad"].ailey-mood {
+  --background: #060810;
+  --card: #0c1020;
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
+  --secondary: #93c5fd;
+  --accent: #60a5fa;
+  --border: #1a2440;
+  --input: #0e1428;
+  --ring: rgba(59, 130, 246, 0.4);
+  --muted: #0e1428;
+  --muted-foreground: #93c5fd;
+  --sidebar-primary: #3b82f6;
+  --sidebar-accent: #60a5fa;
+  --sidebar-border: #1a2440;
+  --ailey-glow: rgba(59, 130, 246, 0.15);
+  --ailey-gradient-a: #3b82f6;
+  --ailey-gradient-b: #7dd3fc;
+}
+
+/* 😡 Angry — hot red/orange intensity */
+[data-ailey-mood="angry"].ailey-mood,
+.dark[data-ailey-mood="angry"].ailey-mood {
+  --background: #0e0606;
+  --card: #1c0c0c;
+  --primary: #ef4444;
+  --primary-foreground: #ffffff;
+  --secondary: #f97316;
+  --accent: #fb923c;
+  --border: #3a1414;
+  --input: #201010;
+  --ring: rgba(239, 68, 68, 0.5);
+  --muted: #201010;
+  --muted-foreground: #fca5a5;
+  --sidebar-primary: #ef4444;
+  --sidebar-accent: #f97316;
+  --sidebar-border: #3a1414;
+  --ailey-glow: rgba(239, 68, 68, 0.2);
+  --ailey-gradient-a: #ef4444;
+  --ailey-gradient-b: #f97316;
+}
+
+/* 😕 Confused — violet/purple uncertainty */
+[data-ailey-mood="confused"].ailey-mood,
+.dark[data-ailey-mood="confused"].ailey-mood {
+  --background: #0a080e;
+  --card: #14101c;
+  --primary: #8b5cf6;
+  --primary-foreground: #ffffff;
+  --secondary: #a78bfa;
+  --accent: #c4b5fd;
+  --border: #281e40;
+  --input: #18122a;
+  --ring: rgba(139, 92, 246, 0.4);
+  --muted: #18122a;
+  --muted-foreground: #c4b5fd;
+  --sidebar-primary: #8b5cf6;
+  --sidebar-accent: #a78bfa;
+  --sidebar-border: #281e40;
+  --ailey-glow: rgba(139, 92, 246, 0.15);
+  --ailey-gradient-a: #8b5cf6;
+  --ailey-gradient-b: #7c3aed;
+}
+
+/* 😴 Sleepy — muted indigo/lavender, calm */
+[data-ailey-mood="sleepy"].ailey-mood,
+.dark[data-ailey-mood="sleepy"].ailey-mood {
+  --background: #08080e;
+  --card: #0e0e1a;
+  --primary: #6366f1;
+  --primary-foreground: #ffffff;
+  --secondary: #a5b4fc;
+  --accent: #818cf8;
+  --border: #1a1a2e;
+  --input: #121222;
+  --ring: rgba(99, 102, 241, 0.3);
+  --muted: #121222;
+  --muted-foreground: #a5b4fc;
+  --sidebar-primary: #6366f1;
+  --sidebar-accent: #818cf8;
+  --sidebar-border: #1a1a2e;
+  --ailey-glow: rgba(99, 102, 241, 0.1);
+  --ailey-gradient-a: #6366f1;
+  --ailey-gradient-b: #a78bfa;
+}
+
+/* 🎨 Creative — vibrant teal/violet creative spark */
+[data-ailey-mood="creative"].ailey-mood,
+.dark[data-ailey-mood="creative"].ailey-mood {
+  --background: #06080c;
+  --card: #0c1218;
+  --primary: #06b6d4;
+  --primary-foreground: #083344;
+  --secondary: #8b5cf6;
+  --accent: #d946ef;
+  --border: #163040;
+  --input: #0e1820;
+  --ring: rgba(6, 182, 212, 0.4);
+  --muted: #0e1820;
+  --muted-foreground: #67e8f9;
+  --sidebar-primary: #06b6d4;
+  --sidebar-accent: #8b5cf6;
+  --sidebar-border: #163040;
+  --ailey-glow: rgba(6, 182, 212, 0.15);
+  --ailey-gradient-a: #06b6d4;
+  --ailey-gradient-b: #8b5cf6;
+}
+
+/* 😏 Flirty — rose/pink, playful warmth */
+[data-ailey-mood="flirty"].ailey-mood,
+.dark[data-ailey-mood="flirty"].ailey-mood {
+  --background: #0c0608;
+  --card: #1c0e14;
+  --primary: #f43f5e;
+  --primary-foreground: #ffffff;
+  --secondary: #fb7185;
+  --accent: #ec4899;
+  --border: #3a141e;
+  --input: #201018;
+  --ring: rgba(244, 63, 94, 0.5);
+  --muted: #201018;
+  --muted-foreground: #fda4af;
+  --sidebar-primary: #f43f5e;
+  --sidebar-accent: #ec4899;
+  --sidebar-border: #3a141e;
+  --ailey-glow: rgba(244, 63, 94, 0.18);
+  --ailey-gradient-a: #f43f5e;
+  --ailey-gradient-b: #ec4899;
+}
+
+/* 🔍 Curious — bright cyan/blue, exploratory */
+[data-ailey-mood="curious"].ailey-mood,
+.dark[data-ailey-mood="curious"].ailey-mood {
+  --background: #060a0e;
+  --card: #0c141c;
+  --primary: #0ea5e9;
+  --primary-foreground: #082f49;
+  --secondary: #38bdf8;
+  --accent: #06b6d4;
+  --border: #142838;
+  --input: #0e1c28;
+  --ring: rgba(14, 165, 233, 0.4);
+  --muted: #0e1c28;
+  --muted-foreground: #7dd3fc;
+  --sidebar-primary: #0ea5e9;
+  --sidebar-accent: #06b6d4;
+  --sidebar-border: #142838;
+  --ailey-glow: rgba(14, 165, 233, 0.15);
+  --ailey-gradient-a: #0ea5e9;
+  --ailey-gradient-b: #06b6d4;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🎭 VISUAL EFFECTS — Mood-reactive UI elements
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Aurora-like background gradient that shifts with mood */
+.ailey-mood body {
+  background: linear-gradient(
+    160deg,
+    var(--background) 0%,
+    color-mix(in srgb, var(--ailey-gradient-a) 5%, var(--background)) 30%,
+    color-mix(in srgb, var(--ailey-gradient-b) 3%, var(--background)) 70%,
+    var(--background) 100%
+  ) !important;
+}
+
+/* Header: subtle mood-colored bottom glow */
+.ailey-mood header {
+  border-bottom-color: color-mix(in srgb, var(--ailey-gradient-a) 25%, transparent) !important;
+  box-shadow: 0 1px 20px var(--ailey-glow) !important;
+}
+
+/* Cards breathe with mood glow */
+.ailey-mood [class*="bg-card"] {
+  box-shadow: 0 2px 15px var(--ailey-glow) !important;
+}
+
+/* Active nav buttons glow */
+.ailey-mood nav button[class*="bg-primary"] {
+  box-shadow: 0 0 12px var(--ailey-glow) !important;
+}
+
+/* Graffiti logo adapts to mood */
+.ailey-mood .graffiti-text {
+  background: linear-gradient(45deg, var(--ailey-gradient-a), var(--ailey-gradient-b)) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: drop-shadow(0 0 8px var(--ailey-glow)) !important;
+}
+
+/* Chat AI messages: mood-tinted left border */
+.ailey-mood [class*="bg-card"][class*="border-accent"] {
+  border-left: 2px solid var(--accent) !important;
+  box-shadow: inset 0 0 15px var(--ailey-glow) !important;
+}
+
+/* Scrollbar adapts */
+.ailey-mood ::-webkit-scrollbar-thumb {
+  background: var(--primary) !important;
+}
+.ailey-mood ::-webkit-scrollbar-thumb:hover {
+  background: var(--accent) !important;
+}
+.ailey-mood ::-webkit-scrollbar-track {
+  background: var(--background) !important;
+}
+
+/* Glassmorphism with mood tint */
+.ailey-mood .glass {
+  border-color: color-mix(in srgb, var(--ailey-gradient-a) 20%, transparent) !important;
+  box-shadow: inset 0 0 20px var(--ailey-glow) !important;
+}
+.ailey-mood .glass-card {
+  border-color: color-mix(in srgb, var(--ailey-gradient-a) 30%, transparent) !important;
+}
+.ailey-mood .glass-button {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--ailey-gradient-a) 60%, transparent),
+    color-mix(in srgb, var(--ailey-gradient-b) 40%, transparent)
+  ) !important;
+  border-color: color-mix(in srgb, var(--ailey-gradient-a) 50%, transparent) !important;
+}
+.ailey-mood .glass-button:hover {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--ailey-gradient-a) 80%, transparent),
+    color-mix(in srgb, var(--ailey-gradient-b) 60%, transparent)
+  ) !important;
+  box-shadow: 0 0 25px var(--ailey-glow) !important;
+}
+.ailey-mood .glass-message-ai {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--ailey-gradient-a) 12%, transparent),
+    color-mix(in srgb, var(--ailey-gradient-b) 8%, transparent)
+  ) !important;
+  border-color: color-mix(in srgb, var(--ailey-gradient-a) 20%, transparent) !important;
+}
+
+/* Gradient background with mood */
+.ailey-mood .gradient-bg {
+  background: linear-gradient(-45deg,
+    var(--background),
+    color-mix(in srgb, var(--ailey-gradient-a) 8%, var(--background)),
+    color-mix(in srgb, var(--ailey-gradient-b) 5%, var(--background)),
+    var(--background)
+  ) !important;
+  background-size: 400% 400% !important;
+  animation: ailey-aurora 20s ease infinite !important;
+}
+
+/* Glow effects */
+.ailey-mood .glow-primary {
+  box-shadow: 0 0 20px var(--ailey-glow) !important;
+}
+.ailey-mood .neon-glow {
+  text-shadow: 0 0 5px var(--primary), 0 0 10px var(--primary), 0 0 15px var(--primary) !important;
+}
+
+/* Input focus glow */
+.ailey-mood input:focus,
+.ailey-mood textarea:focus {
+  border-color: color-mix(in srgb, var(--primary) 60%, transparent) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 15%, transparent),
+              0 0 15px var(--ailey-glow) !important;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   ⚙️ STEAMPUNK — Author mode sub-theme
+   Warm brass/copper/amber/brown tones
+   ═══════════════════════════════════════════════════════════════ */
+
+.steampunk,
+.dark.steampunk {
+  --background: #0e0a06;
+  --foreground: #e8dcc8;
+  --card: #1a1408;
+  --card-foreground: #e8dcc8;
+  --popover: #1a1408;
+  --popover-foreground: #e8dcc8;
+  --primary: #cd7f32;
+  --primary-foreground: #1a0e02;
+  --secondary: #b87333;
+  --secondary-foreground: #1a0e02;
+  --muted: #221a0c;
+  --muted-foreground: #c4a870;
+  --accent: #d4a574;
+  --accent-foreground: #1a0e02;
+  --destructive: #c0392b;
+  --destructive-foreground: #ffffff;
+  --border: #3a2a14;
+  --input: #221a0c;
+  --ring: rgba(205, 127, 50, 0.4);
+  --chart-1: #cd7f32;
+  --chart-2: #b87333;
+  --chart-3: #d4a574;
+  --chart-4: #8b6914;
+  --chart-5: #a0522d;
+  --sidebar: #120e06;
+  --sidebar-foreground: #e8dcc8;
+  --sidebar-primary: #cd7f32;
+  --sidebar-primary-foreground: #1a0e02;
+  --sidebar-accent: #d4a574;
+  --sidebar-accent-foreground: #1a0e02;
+  --sidebar-border: #3a2a14;
+  --sidebar-ring: rgba(205, 127, 50, 0.4);
+}
+
+/* Steampunk decorative touches */
+.steampunk header {
+  border-bottom-color: rgba(205, 127, 50, 0.3) !important;
+  box-shadow: 0 1px 15px rgba(205, 127, 50, 0.1) !important;
+}
+
+.steampunk .graffiti-text {
+  background: linear-gradient(45deg, #cd7f32, #d4a574, #8b6914, #cd7f32) !important;
+  background-size: 200% 100% !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  animation: ailey-aurora 8s ease infinite !important;
+  filter: drop-shadow(0 0 6px rgba(205, 127, 50, 0.3)) !important;
+}
+
+.steampunk [class*="bg-card"] {
+  background: linear-gradient(135deg, rgba(26,20,8,0.9), rgba(18,14,6,0.95)) !important;
+  box-shadow: 0 2px 12px rgba(205, 127, 50, 0.06) !important;
+}
+
+.steampunk ::-webkit-scrollbar-thumb {
+  background: #cd7f32 !important;
+}
+.steampunk ::-webkit-scrollbar-thumb:hover {
+  background: #d4a574 !important;
+}
+.steampunk ::-webkit-scrollbar-track {
+  background: #0e0a06 !important;
+}
+
+.steampunk .glass {
+  background: rgba(14, 10, 6, 0.7) !important;
+  border-color: rgba(205, 127, 50, 0.2) !important;
+}
+.steampunk .glass-card {
+  background: rgba(26, 20, 8, 0.7) !important;
+  border-color: rgba(205, 127, 50, 0.25) !important;
+}
+.steampunk .glass-button {
+  background: linear-gradient(135deg, rgba(205,127,50,0.5), rgba(184,115,51,0.4)) !important;
+  border-color: rgba(205, 127, 50, 0.4) !important;
+}
+.steampunk .glass-button:hover {
+  background: linear-gradient(135deg, rgba(205,127,50,0.7), rgba(212,165,116,0.5)) !important;
+  box-shadow: 0 0 25px rgba(205, 127, 50, 0.25) !important;
+}
+.steampunk .glass-message-ai {
+  background: linear-gradient(135deg, rgba(205,127,50,0.1), rgba(184,115,51,0.06)) !important;
+  border-color: rgba(205, 127, 50, 0.15) !important;
+}
+
+/* Steampunk neon-glow becomes warm brass glow */
+.steampunk .neon-glow {
+  text-shadow: 0 0 5px #cd7f32, 0 0 10px #cd7f32, 0 0 15px #cd7f32 !important;
+  animation: steampunk-glow 2s ease-in-out infinite !important;
+}
+
+@keyframes steampunk-glow {
+  0%, 100% { text-shadow: 0 0 5px #cd7f32, 0 0 10px rgba(205,127,50,0.5); }
+  50%      { text-shadow: 0 0 10px #cd7f32, 0 0 20px rgba(212,165,116,0.4); }
+}
+
+/* Steampunk hardcoded color overrides */
+.steampunk .bg-\[\#0a0a0a\] { background-color: #0e0a06 !important; }
+.steampunk .bg-\[\#050505\] { background-color: #0a0804 !important; }
+.steampunk .bg-\[\#111\],
+.steampunk .bg-\[\#111111\] { background-color: #1a1408 !important; }
+.steampunk .bg-\[\#1a1a1a\] { background-color: #221a0c !important; }
+.steampunk .bg-black { background-color: #0e0a06 !important; }
+
+.steampunk .text-\[\#be123c\] { color: #cd7f32 !important; }
+.steampunk .border-\[\#be123c\] { border-color: #cd7f32 !important; }
+.steampunk .border-\[\#be123c\]\/30 { border-color: rgba(205, 127, 50, 0.3) !important; }
+.steampunk .bg-\[\#be123c\]\/10 { background-color: rgba(205, 127, 50, 0.10) !important; }
+.steampunk .bg-\[\#be123c\]\/20 { background-color: rgba(205, 127, 50, 0.20) !important; }
+.steampunk .border-\[\#222\] { border-color: #3a2a14 !important; }
+.steampunk .hover\:text-\[\#be123c\]:hover { color: #cd7f32 !important; }
+.steampunk .hover\:bg-\[\#be123c\]\/10:hover { background-color: rgba(205, 127, 50, 0.10) !important; }
+.steampunk .hover\:bg-\[\#1a1a1a\]:hover { background-color: #221a0c !important; }
+.steampunk .focus\:border-\[\#be123c\]:focus { border-color: #cd7f32 !important; }
+
+/* Steampunk gradient bg */
+.steampunk .gradient-bg {
+  background: linear-gradient(-45deg, #0e0a06, #1a1408, #14100a, #0e0a06) !important;
+  background-size: 400% 400% !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🎭 LIFESIM — Mood-themed game buttons
+   ═══════════════════════════════════════════════════════════════ */
+
+.ailey-mood .lifesim-btn-a {
+  box-shadow: 0 0 10px var(--ailey-glow) !important;
+  transition: all 2s ease-in-out !important;
+}
+
+.ailey-mood .lifesim-btn-b {
+  box-shadow: 0 0 8px var(--ailey-glow) !important;
+  transition: all 2s ease-in-out !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ⚙️ STEAMPUNK — LifeSim brass buttons
+   ═══════════════════════════════════════════════════════════════ */
+
+.steampunk .lifesim-btn-a {
+  background: rgba(205, 127, 50, 0.5) !important;
+  border: 1px solid rgba(205, 127, 50, 0.3) !important;
+  box-shadow: 0 0 10px rgba(205, 127, 50, 0.15) !important;
+}
+.steampunk .lifesim-btn-a:active {
+  background: rgba(205, 127, 50, 0.7) !important;
+}
+
+.steampunk .lifesim-btn-b {
+  background: rgba(184, 115, 51, 0.4) !important;
+  border: 1px solid rgba(184, 115, 51, 0.25) !important;
+  box-shadow: 0 0 8px rgba(184, 115, 51, 0.1) !important;
+}
+.steampunk .lifesim-btn-b:active {
+  background: rgba(184, 115, 51, 0.6) !important;
+}
