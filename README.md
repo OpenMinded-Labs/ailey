@@ -1,4 +1,4 @@
-# Ailey — Autonomous AI Companion Platform
+# Ailey — Autonomous AI Companion Platform DEMO (older version, this isn‘t the live version)
 
 > A full-stack, locally-hosted AI companion system: a Flask inference backend running
 > fine-tuned LLMs on Apple Silicon, a PHP web portal, a Next.js + Tauri desktop app,
