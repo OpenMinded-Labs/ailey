@@ -1,6 +1,6 @@
-# Ailey — Autonomous AI Companion Platform DEMO (older version, this isn‘t the live version)
+# Ailey — Autonomous Persona-Based AI Assistant Platform DEMO (older version, this isn‘t the live version)
 
-> A full-stack, locally-hosted AI companion system: a Flask inference backend running
+> A full-stack, locally-hosted AI assistant system with a persona: a Flask inference backend running
 > fine-tuned LLMs on Apple Silicon, a PHP web portal, a Next.js + Tauri desktop app,
 > and a complete LoRA/DoRA training pipeline.
 
@@ -13,7 +13,7 @@ not to be run as-is.
 
 ## What is Ailey?
 
-Ailey is a persistent, personality-driven AI companion that runs entirely on local
+Ailey is a persistent, persona-based AI assistant that runs entirely on local
 hardware (Apple Silicon / MLX). Unlike a stateless chatbot, Ailey has long-term memory,
 an autonomous "idle thinking" loop, a creative toolset (image / music / video / SVG
 generation), an email agent, and a self-learning engine — all wired together behind a

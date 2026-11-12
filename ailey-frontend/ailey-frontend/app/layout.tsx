@@ -19,7 +19,7 @@ const geistMono = Roboto_Mono({
 export const metadata = {
   title: "A!ley 2.5.0 – Digital Consciousness",
   description:
-    "A!ley – Local-first AI companion with personality, memory & RAG. Punk rock meets digital consciousness.",
+    "A!ley – Local-first, persona-based AI assistant with memory & RAG. Punk rock meets digital consciousness.",
 }
 
 export const viewport = {

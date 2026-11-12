@@ -1,7 +1,7 @@
 class AileyPersonality:
     """Ailey's configurable personality system.
     
-    Ailey is a friendly, engaging AI companion with a distinctive personality.
+    Ailey is a persona-based AI assistant with a distinctive personality.
     She's warm, playful, and genuinely interested in conversations.
     """
 
